@@ -13,7 +13,7 @@ RUN wget -qO - https://weewx.com/apt/weewx-python3.list | sudo tee /etc/apt/sour
 
 RUN sudo apt-get update
 
-RUN sudo apt-get install weewx
+RUN sudo apt-get install -y weewx
 
 RUN sudo pip3 install paho-mqtt
 
