@@ -21,7 +21,7 @@ I have no idea what I'm doing. These Add Ons are a some pet projects I've been w
 
 Follow [the official instructions](https://home-assistant.io/hassio/installing_third_party_addons/) on the Home Assistant website and use the following URL:
 ```txt
-https://github.com/jgoakley/hassio-addons
+https://github.com/ericsche/hassio-addons--weewx
 ```
 
 ## Add-ons provided by this repository
