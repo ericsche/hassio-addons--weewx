@@ -2,9 +2,8 @@
 
 ## About
 
-This repository collects is a fork of ```txt
-https://github.com/jgoakley/hassio-addons
-```
+This repository collects is a fork of https://github.com/jgoakley/hassio-addons
+
 I aim to update the Weews instance and add the inteceptor driver.
 THis should help me get read of my Synology that is now runing only to host a weewx instance.
 
