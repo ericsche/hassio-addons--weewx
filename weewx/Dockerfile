@@ -4,7 +4,8 @@ FROM $BUILD_FROM
 ENV LANG C.UTF-8
 
 RUN apt-get update \
-    && apt-get install -y wget sudo gpg python3-pip \
+    && apt-get install -y wget sudo gpg \
+    python3-configobj python3-cheetah python3-pil python3-usb python3-setuptools python3-pip \
          supervisor tzdata jq
 
 RUN wget -qO - https://weewx.com/keys.html | sudo gpg --dearmor --output /etc/apt/trusted.gpg.d/weewx.gpg
