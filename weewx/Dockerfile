@@ -4,7 +4,7 @@ FROM $BUILD_FROM
 ENV LANG C.UTF-8
 
 RUN apt-get update \
-    && apt-get install -y wget sudo \
+    && apt-get install -y wget sudo gpg \
          supervisor tzdata jq
 
 RUN wget -qO - https://weewx.com/keys.html | sudo gpg --dearmor --output /etc/apt/trusted.gpg.d/weewx.gpg
