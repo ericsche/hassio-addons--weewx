@@ -2,12 +2,17 @@
 
 ## About
 
-This repository collects all of my Hass.io add-ons for easier installation.
+This repository collects is a fork of ```txt
+https://github.com/jgoakley/hassio-addons
+```
+I aim to update the Weews instance and add the inteceptor driver.
+THis should help me get read of my Synology that is now runing only to host a weewx instance.
+
 
 ## Disclaimer / Potential Issues
 
 I have no idea what I'm doing. These Add Ons are a some pet projects I've been working on in my spare time. Here's a couple of things that I think I'm doing wrong but not sure how to fix:
-1. I'm using third party libraries that could change at any time and potentially break stuff (ex. weewx and lirc). I think the solution may be to target specific versions.
+1. I'm using third party libraries that could change at any time and potentially break stuff (ex. weewx ). I think the solution may be to target specific versions.
 2. Speaking of third party libraries, I install npm for the sole purpose of grabbing the lirc2mqtt library. Probably a better approach there.
 3. I think there's a better way to set up the configuration options to indicate which fields are required. I'm pretty sure they are all required for everything to work, but some probably don't need to be required
 4. There's probably more stuff I'm doing wrong so feel free to create a pull request if you know the right way. Thanks!
@@ -233,17 +238,4 @@ action:
     data:
       addon: 10409bfc_hassio_weewx
 mode: single
-```
-
-## LIRC
-Uses the Linux Infrared Remote Control Library and MQTT to send and receive infrared commands with a Raspberry Pi.
-
-** Update: I don't think this installs with current versions of Home Assistant (Anything newer than mid-2019). I no longer use a Raspberry Pi to host Home Assistant (I use a Linux server with a KVM virtual machine) and I have not attempted to get this working on any hardware other than the Raspberry Pi GPIO. Leaving here in case it is helpful for anyone **
-
-#### Example configuration:
-```
-{
-  "mqttUser": "MQTTUserName",
-  "mqttPassword": "MQTTPassword"
-}
 ```
