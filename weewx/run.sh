@@ -24,6 +24,9 @@ sed -i 's/INSERT_SERVER_URL_HERE/mqtt:\/\/'$MQTTUSER':'$MQTTPASSWORD'@core-mosqu
 sed -i 's/archive_interval = 300/archive_interval = 60/g' /home/weewx/weewx.conf
 
 sed -i 's/log_success = True/log_success = False/g' /home/weewx/weewx.conf
+sed -i 's/week_start = 6/week_start = 0/g' /home/weewx/weewx.conf
+
+/home/weewx/weewx.conf
 
 /home/weewx/bin/weewxd /home/weewx/weewx.conf
 #sleep infinity
