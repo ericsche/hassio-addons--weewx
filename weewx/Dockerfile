@@ -23,7 +23,7 @@ RUN sudo apt-get install -y weewx
 RUN sudo pip3 install paho-mqtt
 RUN wget -O /tmp/weewx-mqtt.zip https://github.com/matthewwall/weewx-mqtt/archive/master.zip \
       cd /tmp && \
-      /usr/bin/wee_extension --install weewx-mqtt.tgz
+      /usr/bin/wee_extension --install weewx-mqtt.zip
 
 
 # Install addons Interceptor, WCould, OWM
