@@ -18,29 +18,6 @@ RUN sudo apt-get update
 # Install Weewx
 RUN sudo apt-get install -y weewx
 
-
-# Install MQTT Addin
-RUN sudo pip3 install paho-mqtt
-RUN wget -O /tmp/weewx-mqtt.zip https://github.com/matthewwall/weewx-mqtt/archive/master.zip \
-      cd /tmp && \
-      /usr/bin/wee_extension --install weewx-mqtt.zip
-
-
-# Install addons Interceptor, WCould, OWM
-RUN wget -O /tmp/weewx-interceptor.zip https://github.com/matthewwall/weewx-interceptor/archive/master.zip \
-      cd /tmp && \
-      /usr/bin/wee_extension --install weewx-interceptor.zip
-
-RUN wget -O /tmp/weewx-wcloud.zip https://github.com/matthewwall/weewx-wcloud/archive/master.zip \
-      cd /tmp && \
-      /usr/bin/wee_extension --install weewx-wcloud.zip
-
-RUN wget -O /tmp/weewx-owm.zip https://github.com/matthewwall/weewx-owm/archive/master.zip \
-      cd /tmp && \
-      /usr/bin/wee_extension --install weewx-owm.zip
-
-
-
 # Copy data for add-on
 COPY run.sh /
 RUN chmod a+x /run.sh
