@@ -10,7 +10,11 @@ RUN apk add --no-cache --update \
       py3-configobj py3-mysqlclient py3-pillow py3-requests py3-six py3-usb \
       rsync rsyslog tzdata
 
-         
+RUN  apk add --no-cache --virtual .fetch-deps \
+      file freetype-dev g++ gawk gcc git jpeg-dev libpng-dev make musl-dev \
+      py3-pip py3-wheel python3-dev zlib-dev  
+      
+              
 RUN pip3 install pyserial
 
 RUN curl -sLo /tmp/weewx.tgz http://weewx.com/downloads/released_versions/weewx-4.10.1.tar.gz -O  && \
