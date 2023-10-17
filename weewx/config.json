@@ -1,6 +1,6 @@
 {
   "name": "WeeWX",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "slug": "hassio_weewx",
   "description": "Add-on for connecting weather stations to Hass.io using WeeWX and MQTT",
   "url": "https://github.com/ericsche/hassio-addons--weewx",
@@ -13,6 +13,10 @@
   ],
   "startup": "application",
   "boot": "auto",
+  "map": [
+    "/config/weewx:/home/weewx:rw",
+    "/etc/localtime:/etc/localtime:ro"
+  ],
   "host_network": true,
   "options": {
     "driver": "user.interceptor",
