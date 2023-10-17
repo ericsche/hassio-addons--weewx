@@ -3,10 +3,11 @@ FROM $BUILD_FROM
 
 ENV LANG C.UTF-8
 
-RUN apk add --no-cache --update \ 
-            sqlite3 wget sudo \
-            python-is-python3 python3-pip python3-configobj python3-cheetah python3-pil python3-usb python3-setuptools \
-            supervisor tzdata jq
+RUN apt-get update
+
+RUN apt-get install -y sqlite3 wget sudo \
+         python-is-python3 python3-pip python3-configobj python3-cheetah python3-pil python3-usb python3-setuptools \
+         supervisor tzdata jq
          
 RUN pip3 install pyserial
 
@@ -33,4 +34,4 @@ RUN wget -O /tmp/weewx-interceptor.zip https://github.com/matthewwall/weewx-inte
 COPY run.sh /
 RUN chmod 777 /run.sh
 
-ENTRYPOINT  [ "/run.sh" ]
+CMD [ "/run.sh" ]
