@@ -3,7 +3,7 @@ FROM $BUILD_FROM
 
 ENV LANG C.UTF-8
 
-RUN apk add --no-cache --update \ 
+RUN apk add --no-cache  \ 
             sqlite3 wget sudo \
             python-is-python3 python3-pip python3-configobj python3-cheetah python3-pil python3-usb python3-setuptools \
             supervisor tzdata jq
