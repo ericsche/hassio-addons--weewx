@@ -15,12 +15,12 @@ RUN  apk add --no-cache --virtual .fetch-deps \
       py3-pip py3-wheel python3-dev zlib-dev  
 
 
-RUN pip3 install pyserial Cheetah3 mysqlclient pillow PyUSB requests six
+RUN pip3 install pyserial Cheetah3 mysqlclient pillow PyUSB 
 
 RUN curl -sLo /tmp/weewx.tgz http://weewx.com/downloads/released_versions/weewx-4.10.1.tar.gz -O  && \
       cd /tmp && \
       tar zxvf /tmp/weewx.tgz && \
-      cd weewx-* ; ./setup.py build ; ./setup.py install --no-prompt
+      cd weewx-* && ./setup.py build && ./setup.py install --no-prompt
 
 RUN curl -sLo /tmp/mqtt.tgz https://github.com/eclipse/paho.mqtt.python/archive/v1.6.1.tar.gz  && \
       cd /tmp && \
