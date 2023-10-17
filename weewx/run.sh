@@ -1,6 +1,11 @@
 #!/bin/bash
+bashio::log.info "Preparing to start..."
 
 CONFIG_PATH=/data/options.json
+DATA_PATH=$(bashio::config 'data_path')
+
+
+
 
 DRIVER="$(jq --raw-output '.driver' $CONFIG_PATH)"
 LATITUDE="$(jq --raw-output '.latitude' $CONFIG_PATH)"
@@ -12,7 +17,13 @@ UNITS="$(jq --raw-output '.units' $CONFIG_PATH)"
 MQTTUSER="$(jq --raw-output '.mqttUser' $CONFIG_PATH)"
 MQTTPASSWORD="$(jq --raw-output '.mqttPassword' $CONFIG_PATH)"
 
-/home/weewx/bin/wee_config --reconfigure --driver=$DRIVER --latitude=$LATITUDE --longitude=$LONGITUDE --altitude=$ALTITUDE,$ALTITUDEUNIT --location=$LOCATION --units=$UNITS --no-prompt --config=/home/weewx/weewx.conf
+
+export ZIGBEE2MQTT_DATA="$(bashio::config 'data_path')"
+if ! bashio::fs.file_exists "$ZIGBEE2MQTT_DATA/weewx.conf"; then
+    mkdir -p "$ZIGBEE2MQTT_DATA" || bashio::exit.nok "Could not create $ZIGBEE2MQTT_DATA"
+
+
+/home/weewx/bin/wee_config --reconfigure --driver=$DRIVER --latitude=$LATITUDE --longitude=$LONGITUDE --altitude=$ALTITUDE,$ALTITUDEUNIT --location=$LOCATION --units=$UNITS --no-prompt --config=$DATA_PATH/weewx.conf
 
 sed -i '/INSERT_SERVER_URL_HERE/ a \
 \ \ \ \ \ \ \ \ topic = weather\
