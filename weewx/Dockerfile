@@ -19,8 +19,9 @@ RUN pip3 install pyserial Cheetah3 mysqlclient pillow PyUSB
 
 RUN curl -sLo /tmp/weewx.tgz http://weewx.com/downloads/released_versions/weewx-4.10.2.tar.gz -O  && \
       cd /tmp && \
-      tar zxvf /tmp/weewx.tgz && \
-      cd weewx && ./setup.py build && ./setup.py install --no-prompt
+      tar xf weewx.tar.gz --strip-components=1 && \
+    cd /build && \
+    ./setup.py build && ./setup.py install --no-prompt
 
 RUN curl -sLo /tmp/mqtt.tgz https://github.com/eclipse/paho.mqtt.python/archive/v1.6.1.tar.gz  && \
       cd /tmp && \
