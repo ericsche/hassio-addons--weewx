@@ -13,9 +13,9 @@ RUN apk add --no-cache --update \
 RUN  apk add --no-cache --virtual .fetch-deps \
       file freetype-dev g++ gawk gcc git jpeg-dev libpng-dev make musl-dev \
       py3-pip py3-wheel python3-dev zlib-dev  
-      
-              
-RUN pip3 install pyserial
+
+
+RUN pip3 install pyserial Cheetah3 mysqlclient pillow PyUSB requests six
 
 RUN curl -sLo /tmp/weewx.tgz http://weewx.com/downloads/released_versions/weewx-4.10.1.tar.gz -O  && \
       cd /tmp && \
