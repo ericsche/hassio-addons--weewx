@@ -3,36 +3,29 @@ FROM $BUILD_FROM
 
 ENV LANG C.UTF-8
 
-RUN apk update
+RUN apt-get update
 
-RUN apk add --no-cache --update \
-      curl freetype libjpeg libstdc++ openssh openssl python3 py3-cheetah \
-      py3-configobj py3-mysqlclient py3-pillow py3-requests py3-six py3-usb \
-      rsync rsyslog tzdata
+RUN apt-get install -y sqlite3 wget sudo \
+         python-is-python3 python3-pip python3-configobj python3-cheetah python3-pil python3-usb python3-setuptools \
+         supervisor tzdata jq
+         
+RUN pip3 install pyserial
 
-RUN  apk add --no-cache --virtual .fetch-deps \
-      file freetype-dev g++ gawk gcc git jpeg-dev libpng-dev make musl-dev \
-      py3-pip py3-wheel python3-dev zlib-dev  
-
-
-RUN pip3 install pyserial Cheetah3 mysqlclient pillow PyUSB 
-
-RUN curl -sLo /tmp/weewx.tgz http://weewx.com/downloads/released_versions/weewx-4.10.2.tar.gz -O  && \
+RUN wget http://weewx.com/downloads/released_versions/weewx-4.10.1.tar.gz -O /tmp/weewx.tgz && \
       cd /tmp && \
-      tar xf weewx.tar.gz --strip-components=1 && \
-    cd /build && \
-    ./setup.py build && ./setup.py install --no-prompt
+      tar zxvf /tmp/weewx.tgz && \
+      cd weewx-* ; ./setup.py build ; ./setup.py install --no-prompt
 
-RUN curl -sLo /tmp/mqtt.tgz https://github.com/eclipse/paho.mqtt.python/archive/v1.6.1.tar.gz  && \
+RUN wget https://github.com/eclipse/paho.mqtt.python/archive/v1.6.1.tar.gz -O /tmp/mqtt.tgz && \
       cd /tmp && \
       tar zxvf /tmp/mqtt.tgz && \
       cd paho.mqtt.python-* ; sudo python3 setup.py build ; sudo python3 setup.py install
 
-RUN curl -sLo /tmp/weewx-mqtt.zip https://github.com/matthewwall/weewx-mqtt/archive/master.zip  && \
+RUN wget https://github.com/matthewwall/weewx-mqtt/archive/master.zip -O /tmp/weewx-mqtt.zip && \
       cd /tmp && \
       /home/weewx/bin/wee_extension --install weewx-mqtt.zip
 
-RUN curl -sLo /tmp/weewx-interceptor.zip https://github.com/matthewwall/weewx-interceptor/archive/master.zip && \
+RUN wget -O /tmp/weewx-interceptor.zip https://github.com/matthewwall/weewx-interceptor/archive/master.zip && \
       cd /tmp && \
       /home/weewx/bin/wee_extension --install weewx-interceptor.zip
 
@@ -41,4 +34,4 @@ RUN curl -sLo /tmp/weewx-interceptor.zip https://github.com/matthewwall/weewx-in
 COPY run.sh /
 RUN chmod 777 /run.sh
 
-ENTRYPOINT  [ "/run.sh" ]
+CMD [ "/run.sh" ]
