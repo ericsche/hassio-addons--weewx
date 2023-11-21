@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bashio
 bashio::log.info "Preparing to start..."
 
 CONFIG_PATH=/data/options.json
