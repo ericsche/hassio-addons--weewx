@@ -22,8 +22,9 @@ export ZIGBEE2MQTT_DATA="$(bashio::config 'data_path')"
 if ! bashio::fs.file_exists "$ZIGBEE2MQTT_DATA/weewx.conf"; then
     mkdir -p "$ZIGBEE2MQTT_DATA" || bashio::exit.nok "Could not create $ZIGBEE2MQTT_DATA"
 
-
 /home/weewx/bin/wee_config --reconfigure --driver=$DRIVER --latitude=$LATITUDE --longitude=$LONGITUDE --altitude=$ALTITUDE,$ALTITUDEUNIT --location=$LOCATION --units=$UNITS --no-prompt --config=$DATA_PATH/weewx.conf
+
+fi
 
 sed -i '/INSERT_SERVER_URL_HERE/ a \
 \ \ \ \ \ \ \ \ topic = weather\
@@ -37,5 +38,5 @@ sed -i 's/archive_interval = 300/archive_interval = 60/g' /home/weewx/weewx.conf
 sed -i 's/log_success = True/log_success = False/g' /home/weewx/weewx.conf
 sed -i 's/week_start = 6/week_start = 0/g' /home/weewx/weewx.conf
 
+bashio::log.info "Starting Weewx..."
 /home/weewx/bin/weewxd /home/weewx/weewx.conf
-#sleep infinity
