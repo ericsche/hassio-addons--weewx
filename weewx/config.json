@@ -24,7 +24,7 @@
     "altitude": 134,
     "altitudeUnit": "meter",
     "location": "Maison",
-    "units": "METRICWX",
+    "units": "metricwx",
     "mqttUser": "mqttuser",
     "mqttPassword": "password"
   },
