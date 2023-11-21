@@ -23,7 +23,7 @@ if ! bashio::fs.file_exists "$ZIGBEE2MQTT_DATA/weewx.conf"; then
     mkdir -p "$ZIGBEE2MQTT_DATA" || bashio::exit.nok "Could not create $ZIGBEE2MQTT_DATA"
 
 bashio::log.info "Copy default config..."
-cp /etc/weewx/weewx.conf $ZIGBEE2MQTT_DATA/weewx.conf
+cp /home/weewx/weewx.conf $ZIGBEE2MQTT_DATA/weewx.conf
 
 bashio::log.info "Reconfigure..."
 /home/weewx/bin/wee_config --reconfigure --driver=$DRIVER --latitude=$LATITUDE --longitude=$LONGITUDE --altitude=$ALTITUDE,$ALTITUDEUNIT --location=$LOCATION --units=$UNITS --no-prompt --config=$DATA_PATH/weewx.conf
