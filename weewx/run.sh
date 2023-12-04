@@ -37,10 +37,11 @@ fi
 
 #sed -i 's/INSERT_SERVER_URL_HERE/mqtt:\/\/'$MQTTUSER':'$MQTTPASSWORD'@core-mosquitto:1883/g' $ZIGBEE2MQTT_DATA/weewx.conf
 
-#sed -i 's/archive_interval = 300/archive_interval = 60/g' $ZIGBEE2MQTT_DATA/weewx.conf
+sed -i 's/archive_interval = 300/archive_interval = 60/g' $ZIGBEE2MQTT_DATA/weewx.conf
 
-#sed -i 's/log_success = True/log_success = False/g' $ZIGBEE2MQTT_DATA/weewx.conf
+sed -i 's/log_success = True/log_success = False/g' $ZIGBEE2MQTT_DATA/weewx.conf
 sed -i 's/week_start = 6/week_start = 0/g' $ZIGBEE2MQTT_DATA/weewx.conf
+sed -i 's/device_type = acurite-bridge/device_type = wu-client/g' $ZIGBEE2MQTT_DATA/weewx.conf
 
 bashio::log.info "Starting Weewx..."
 /home/weewx/bin/weewxd $ZIGBEE2MQTT_DATA/weewx.conf
