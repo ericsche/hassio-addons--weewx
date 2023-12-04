@@ -3,14 +3,15 @@ FROM $BUILD_FROM
 
 ENV LANG C.UTF-8
 
-RUN apt-get install -y sqlite3 wget
+RUN apt-get update && apt-get install -y sqlite3 wget gnupg2
 
-RUN apt-get install -y gnupg2
 RUN wget -qO - https://weewx.com/keys.html | gpg --dearmor --output /etc/apt/trusted.gpg.d/weewx.gpg
 RUN wget -qO - https://weewx.com/apt/weewx-python3.list |  tee /etc/apt/sources.list.d/weewx.list
 
 
 RUN apt-get update
+
+
 
 RUN apt-get install weewx
 
