@@ -26,7 +26,7 @@ bashio::log.info "Copy default config..."
 cp /home/weewx/weewx.conf $ZIGBEE2MQTT_DATA/weewx.conf
 
 bashio::log.info "Reconfigure..."
-/home/weewx/bin/wee_config --reconfigure --driver=$DRIVER --latitude=$LATITUDE --longitude=$LONGITUDE --altitude=$ALTITUDE,$ALTITUDEUNIT --location=$LOCATION --units=$UNITS --no-prompt --config=$DATA_PATH/weewx.conf
+/home/weewx/bin/wee_config --reconfigure --driver=$DRIVER --latitude=$LATITUDE --longitude=$LONGITUDE --altitude=$ALTITUDE,$ALTITUDEUNIT --location=$LOCATION --units=$UNITS --no-prompt --config=/home/weewx/weewx.conf
 
 fi
 
@@ -44,4 +44,4 @@ sed -i 's/week_start = 6/week_start = 0/g' $ZIGBEE2MQTT_DATA/weewx.conf
 sed -i 's/device_type = acurite-bridge/device_type = wu-client/g' $ZIGBEE2MQTT_DATA/weewx.conf
 
 bashio::log.info "Starting Weewx..."
-/home/weewx/bin/weewxd $ZIGBEE2MQTT_DATA/weewx.conf
+/home/weewx/bin/weewxd /home/weewx/weewx.conf
