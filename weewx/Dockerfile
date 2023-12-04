@@ -9,11 +9,7 @@ RUN wget -qO - https://weewx.com/keys.html | gpg --dearmor --output /etc/apt/tru
 RUN wget -qO - https://weewx.com/apt/weewx-python3.list |  tee /etc/apt/sources.list.d/weewx.list
 
 
-RUN apt-get update
-
-
-
-RUN apt-get install weewx
+RUN apt-get update && apt-get install -y weewx
 
          
 RUN pip3 install pyserial
