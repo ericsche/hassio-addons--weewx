@@ -2,7 +2,8 @@ ARG BUILD_FROM
 FROM $BUILD_FROM
 
 ENV LANG C.UTF-8
-RUN apt-get install -y sqlite3 wget sudo 
+
+RUN apt-get install -y sqlite3 wget
 
 RUN apt-get install -y gnupg2
 RUN wget -qO - https://weewx.com/keys.html | gpg --dearmor --output /etc/apt/trusted.gpg.d/weewx.gpg
