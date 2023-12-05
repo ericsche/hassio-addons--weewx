@@ -18,11 +18,11 @@ RUN pip3 install paho-mqtt
 
 RUN wget https://github.com/matthewwall/weewx-mqtt/archive/master.zip -O /tmp/weewx-mqtt.zip && \
       cd /tmp && \
-      /home/weewx/bin/wee_extension --install weewx-mqtt.zip
+      /usr/bin/wee_extension --install weewx-mqtt.zip
 
 RUN wget -O /tmp/weewx-interceptor.zip https://github.com/matthewwall/weewx-interceptor/archive/master.zip && \
       cd /tmp && \
-      /home/weewx/bin/wee_extension --install weewx-interceptor.zip
+      /usr/bin/wee_extension --install weewx-interceptor.zip
 
 
 # Copy data for add-on
