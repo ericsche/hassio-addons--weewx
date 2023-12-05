@@ -26,13 +26,13 @@ bashio::log.info "Copy default config..."
 cp /etc/weewx/weewx.conf $ZIGBEE2MQTT_DATA/weewx.conf
 
 bashio::log.info "Reconfigure..."
-/usr/bin/wee_config --reconfigure --driver=$DRIVER --latitude=$LATITUDE --longitude=$LONGITUDE --altitude=$ALTITUDE,$ALTITUDEUNIT --location=$LOCATION --units=$UNITS --no-prompt --config=$DATA_PATH/weewx.conf
+/usr/bin/wee_config --reconfigure --driver=$DRIVER --latitude=$LATITUDE --longitude=$LONGITUDE --altitude=$ALTITUDE,$ALTITUDEUNIT --location=$LOCATION --units=$UNITS --no-prompt --config=$ZIGBEE2MQTT_DATA/weewx.conf
 
 fi
 
 sed -i '/INSERT_SERVER_URL_HERE/ a \
 \ \ \ \ \ \ \ \ topic = weather\
-\ \ \ \ \ \ \ \ unit_system = US\
+\ \ \ \ \ \ \ \ unit_system = METRICWX\
 ' $ZIGBEE2MQTT_DATA/weewx.conf
 
 sed -i 's/INSERT_SERVER_URL_HERE/mqtt:\/\/'$MQTTUSER':'$MQTTPASSWORD'@core-mosquitto:1883/g' $ZIGBEE2MQTT_DATA/weewx.conf
