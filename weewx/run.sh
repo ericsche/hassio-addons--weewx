@@ -25,10 +25,12 @@ if ! bashio::fs.file_exists "$ZIGBEE2MQTT_DATA/weewx.conf"; then
 bashio::log.info "Copy default config..."
 cp /etc/weewx/weewx.conf $ZIGBEE2MQTT_DATA/weewx.conf
 
+
+fi
+
 bashio::log.info "Reconfigure..."
 /usr/bin/wee_config --reconfigure --driver=$DRIVER --latitude=$LATITUDE --longitude=$LONGITUDE --altitude=$ALTITUDE,$ALTITUDEUNIT --location=$LOCATION --units=$UNITS --no-prompt --config=$ZIGBEE2MQTT_DATA/weewx.conf
 
-fi
 
 sed -i '/INSERT_SERVER_URL_HERE/ a \
 \ \ \ \ \ \ \ \ topic = weather\
@@ -41,6 +43,8 @@ sed -i 's/archive_interval = 300/archive_interval = 60/g' $ZIGBEE2MQTT_DATA/weew
 
 sed -i 's/log_success = True/log_success = False/g' $ZIGBEE2MQTT_DATA/weewx.conf
 sed -i 's/week_start = 6/week_start = 0/g' $ZIGBEE2MQTT_DATA/weewx.conf
+
+sed -i 's/SQLITE_ROOT = %(WEEWX_ROOT)s/archive/QLITE_ROOT ='$ZIGBEE2MQTT_DATA'/weewx.conf/g' $ZIGBEE2MQTT_DATA/weewx.conf
 
 bashio::log.info "Starting Weewx..."
 

@@ -20,7 +20,7 @@ RUN wget https://github.com/matthewwall/weewx-mqtt/archive/master.zip -O /tmp/we
       cd /tmp && \
       /usr/bin/wee_extension --install weewx-mqtt.zip
 
-RUN wget -O /tmp/weewx-interceptor.zip https://github.com/matthewwall/weewx-interceptor/archive/master.zip && \
+RUN wget https://github.com/matthewwall/weewx-interceptor/archive/master.zip -O /tmp/weewx-interceptor.zip && \
       cd /tmp && \
       /usr/bin/wee_extension --install weewx-interceptor.zip
 
