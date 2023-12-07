@@ -16,7 +16,7 @@
     "80/tcp": 80
   },
   "ports_description": {
-    "80/tcp": "Interceptor port for WeeWX. Needs to be port 80 to use DNS Hack",
+    "80/tcp": "Interceptor port for WeeWX. Needs to be port 80 to use DNS Hack"
   },
   "map": [
     "config:rw"
