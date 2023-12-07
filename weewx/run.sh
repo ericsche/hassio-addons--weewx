@@ -41,7 +41,7 @@ sed -i 's/INSERT_SERVER_URL_HERE/mqtt:\/\/'$MQTTUSER':'$MQTTPASSWORD'@core-mosqu
 
 sed -i 's/archive_interval = 300/archive_interval = 60/g' $ZIGBEE2MQTT_DATA/weewx.conf
 
-sed -i 's/log_success = True/log_success = False/g' $ZIGBEE2MQTT_DATA/weewx.conf
+#sed -i 's/log_success = True/log_success = False/g' $ZIGBEE2MQTT_DATA/weewx.conf
 sed -i 's/week_start = 6/week_start = 0/g' $ZIGBEE2MQTT_DATA/weewx.conf
 
 #sed -i 's/SQLITE_ROOT = %(WEEWX_ROOT)s/archive/QLITE_ROOT ='$ZIGBEE2MQTT_DATA'/weewx.conf/g' $ZIGBEE2MQTT_DATA/weewx.conf
