@@ -12,7 +12,6 @@
   ],
   "startup": "application",
   "boot": "auto",
-  "host_network": true,
   "map": [
     "config:rw"
   ],
