@@ -37,7 +37,7 @@ sed -i '/INSERT_SERVER_URL_HERE/ a \
 \ \ \ \ \ \ \ \ unit_system = METRICWX\
 ' $ZIGBEE2MQTT_DATA/weewx.conf
 
-sed -i 's/INSERT_SERVER_URL_HERE/mqtt:\/\/'$MQTTUSER':'$MQTTPASSWORD'@core-mosquitto:1883/g' $ZIGBEE2MQTT_DATA/weewx.conf
+sed -i 's/INSERT_SERVER_URL_HERE/mqtt:\/\/'$MQTTUSER':'$MQTTPASSWORD'@homeassistant.local:1883/g' $ZIGBEE2MQTT_DATA/weewx.conf
 
 sed -i 's/archive_interval = 300/archive_interval = 60/g' $ZIGBEE2MQTT_DATA/weewx.conf
 
