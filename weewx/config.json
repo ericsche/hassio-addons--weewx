@@ -1,6 +1,6 @@
 {
   "name": "WeeWX",
-  "version": "0.4.10",
+  "version": "0.4.11",
   "slug": "hassio_weewx",
   "description": "Add-on for connecting weather stations to Hass.io using WeeWX and MQTT",
   "url": "https://github.com/ericsche/hassio-addons--weewx",
@@ -12,7 +12,12 @@
   ],
   "startup": "application",
   "boot": "auto",
-  "network": "host",
+  "ports": {
+    "80/tcp": 80
+  },
+  "ports_description": {
+    "80/tcp": "Interceptor port for WeeWX. Needs to be port 80 to use DNS Hack"
+  },
   "map": [
     "config:rw"
   ],
