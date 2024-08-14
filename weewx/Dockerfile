@@ -16,9 +16,7 @@ RUN pip3 install pyserial
 RUN pip3 install paho-mqtt
 
 
-RUN wget https://github.com/matthewwall/weewx-mqtt/archive/master.zip -O /tmp/weewx-mqtt.zip && \
-      cd /tmp && \
-      /usr/bin/wee_extension --install weewx-mqtt.zip
+RUN weectl extension install https://github.com/matthewwall/weewx-mqtt/archive/master.zip 
 
 RUN weectl extension install https://github.com/matthewwall/weewx-interceptor/archive/master.zip
 RUN weectl station reconfigure --no-prompt --driver=user.interceptor
