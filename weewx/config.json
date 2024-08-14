@@ -12,7 +12,12 @@
   ],
   "startup": "application",
   "boot": "auto",
-  "host_network": true,
+  "ports": {
+    "80/tcp": 80
+  },
+  "ports_description": {
+    "80/tcp": "Interceptor port for WeeWX. Needs to be port 80 to use DNS Hack"
+  },
   "map": [
     "config:rw"
   ],
