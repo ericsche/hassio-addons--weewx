@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y weewx
 RUN apt-get update && apt-get install -y python3-pip python3-venv 
          
 
-RUN pip install pyserial
+RUN pip install python3-serial
 RUN pip install paho-mqtt==1.6.1
 
 
