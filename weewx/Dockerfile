@@ -14,6 +14,9 @@ RUN apt-get update && apt-get install -y weewx
 RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
+# Ensure wheel is installed
+RUN pip install wheel
+
 # Install python-cjson separately to identify issues
 RUN pip install python-cjson
 
