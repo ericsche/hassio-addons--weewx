@@ -10,10 +10,14 @@ RUN wget -qO - https://weewx.com/keys.html | gpg --dearmor --output /etc/apt/tru
 RUN echo "deb [arch=all] https://weewx.com/apt/python3 buster main" | tee /etc/apt/sources.list.d/weewx.list
 
 RUN apt-get update && apt-get install -y weewx
+
+# Install Python to run pip3
+
 RUN apt-get update && apt-get install -y python3-pip python3-venv 
          
-RUN pip3 install pyserial
-RUN pip3 install paho-mqtt
+
+RUN pip install pyserial
+RUN pip install paho-mqtt==1.6.1
 
 
 RUN weectl extension install https://github.com/matthewwall/weewx-mqtt/archive/master.zip 
