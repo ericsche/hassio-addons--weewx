@@ -17,6 +17,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 RUN pip install pyserial
 RUN pip install "paho-mqtt<2.0.0"
+RUN pip install python-cjson
 
 
 RUN weectl extension install https://github.com/matthewwall/weewx-mqtt/archive/master.zip 
