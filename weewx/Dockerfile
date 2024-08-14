@@ -3,7 +3,7 @@ FROM $BUILD_FROM
 
 ENV LANG C.UTF-8
 
-RUN apt-get update && apt-get install -y wget gnupg python3-pip python3-venv python3-serial 
+RUN apt-get update && apt-get install -y wget gnupg python3-pip python3-venv
 
 RUN wget -qO - https://weewx.com/keys.html | gpg --dearmor --output /etc/apt/trusted.gpg.d/weewx.gpg
 
@@ -15,7 +15,8 @@ RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 
-RUN pip install paho-mqtt==1.6.1
+RUN pip install pyserial
+RUN pip install paho-mqtt<2.0.0
 
 
 RUN weectl extension install https://github.com/matthewwall/weewx-mqtt/archive/master.zip 
