@@ -17,8 +17,6 @@ ENV PATH="/opt/venv/bin:$PATH"
 # Ensure wheel is installed
 RUN pip install wheel
 
-# Install python-cjson separately to identify issues
-RUN pip install python-cjson
 
 RUN pip install pyserial
 RUN pip install "paho-mqtt<2.0.0"
