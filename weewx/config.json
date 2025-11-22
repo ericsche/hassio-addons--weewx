@@ -40,4 +40,5 @@
     "altitudeUnit": "str",
     "location": "str",
     "units": "str"
+  }
 }
