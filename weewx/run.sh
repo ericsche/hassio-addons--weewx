@@ -14,8 +14,6 @@ ALTITUDE="$(jq --raw-output '.altitude' $CONFIG_PATH)"
 ALTITUDEUNIT="$(jq --raw-output '.altitudeUnit' $CONFIG_PATH)"
 LOCATION="$(jq --raw-output '.location' $CONFIG_PATH)"
 UNITS="$(jq --raw-output '.units' $CONFIG_PATH)"
-MQTTUSER="$(jq --raw-output '.mqttUser' $CONFIG_PATH)"
-MQTTPASSWORD="$(jq --raw-output '.mqttPassword' $CONFIG_PATH)"
 
 
 export WEEWX_DATA="$(bashio::config 'data_path')"

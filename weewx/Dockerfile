@@ -16,14 +16,12 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # Ensure wheel is installed
 RUN pip install wheel
-
+RUN pip install libpcap
+RUN pip install pypcap
 
 RUN pip install pyserial
-RUN pip install "paho-mqtt<2.0.0"
 
 
-
-RUN weectl extension install https://github.com/matthewwall/weewx-mqtt/archive/master.zip 
 
 RUN weectl extension install https://github.com/matthewwall/weewx-interceptor/archive/master.zip
 
