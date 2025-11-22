@@ -10,16 +10,20 @@ RUN wget -qO - https://weewx.com/keys.html | gpg --dearmor --output /etc/apt/tru
 RUN echo "deb [arch=all] https://weewx.com/apt/python3 buster main" | tee /etc/apt/sources.list.d/weewx.list
 
 
-RUN python3 -m venv ~/weewx-venv
+RUN python3 -m venv /opt/weewx-venv
+
 ENV source ~/weewx-venv/bin/activate
-RUN pip install wheel
-RUN pip install configobj
+# Upgrade pip inside the venv
+RUN /opt/weewx-venv/bin/pip install --upgrade pip
 
-RUN pip install libpcap
+# Install wheel and configobj inside the venv
+RUN /opt/weewx-venv/bin/pip install wheel configobj
 
-RUN pip install pyserial
+RUN /opt/weewx-venv/bin/pip install libpcap
 
-RUN python3 -m pip install weewx
+RUN /opt/weewx-venv/bin/pip install pyserial
+
+RUN /opt/weewx-venv/bin/pip install weewx
 
 # Ensure wheel is installed
 
