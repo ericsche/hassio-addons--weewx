@@ -9,10 +9,10 @@ RUN wget -qO - https://weewx.com/keys.html | gpg --dearmor --output /etc/apt/tru
 
 RUN echo "deb [arch=all] https://weewx.com/apt/python3 buster main" | tee /etc/apt/sources.list.d/weewx.list
 
-RUN apt-get update && apt-get install -y weewx
 
-RUN python3 -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
+RUN python3 -m venv ~/weewx-venv
+ENV source ~/weewx-venv/bin/activate
+RUN python3 -m pip install weewx
 
 # Ensure wheel is installed
 RUN pip install wheel
