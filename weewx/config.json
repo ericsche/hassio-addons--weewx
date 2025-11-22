@@ -1,6 +1,6 @@
 {
   "name": "WeeWX",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "slug": "hassio_weewx",
   "description": "Add-on for connecting weather stations to Hass.io using WeeWX and MQTT",
   "url": "https://github.com/ericsche/hassio-addons--weewx",

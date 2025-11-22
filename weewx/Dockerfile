@@ -12,15 +12,17 @@ RUN echo "deb [arch=all] https://weewx.com/apt/python3 buster main" | tee /etc/a
 
 RUN python3 -m venv ~/weewx-venv
 ENV source ~/weewx-venv/bin/activate
-RUN python3 -m pip install weewx
-
-# Ensure wheel is installed
 RUN pip install wheel
 RUN pip install configobj
 
 RUN pip install libpcap
 
 RUN pip install pyserial
+
+RUN python3 -m pip install weewx
+
+# Ensure wheel is installed
+
 
 
 
