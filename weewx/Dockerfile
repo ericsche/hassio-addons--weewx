@@ -16,6 +16,8 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # Ensure wheel is installed
 RUN pip install wheel
+RUN pip install configobj
+
 RUN pip install libpcap
 
 RUN pip install pyserial
