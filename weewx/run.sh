@@ -21,10 +21,16 @@ if ! bashio::fs.file_exists "$WEEWX_DATA/weewx.conf"; then
     mkdir -p "$WEEWX_DATA" || bashio::exit.nok "Could not create $WEEWX_DATA"
 
 bashio::log.info "Create default config..."
-/usr/share/weewx/weectl station create --driver=$DRIVER --latitude=$LATITUDE --longitude=$LONGITUDE --altitude=$ALTITUDE,$ALTITUDEUNIT --location=$LOCATION --units=$UNITS --no-prompt --config=$WEEWX_DATA/weewx.conf --sqlite-root=$WEEWX_DATA/archive --html-root=$WEEWX_DATA/public_html  --skin-root=$WEEWX_DATA/skins  --no-prompt
+/opt/weewx-venv/bin/weectl station create --driver=$DRIVER --latitude=$LATITUDE --longitude=$LONGITUDE --altitude=$ALTITUDE,$ALTITUDEUNIT --location=$LOCATION --units=$UNITS --no-prompt --config=$WEEWX_DATA/weewx.conf --sqlite-root=$WEEWX_DATA/archive --html-root=$WEEWX_DATA/public_html  --skin-root=$WEEWX_DATA/skins  --no-prompt
+
+    # Install interceptor extension only if not already installed
+    if ! grep -q "interceptor" "$WEEWX_DATA/weewx.conf"; then
+        bashio::log.info "Installing interceptor extension..."
+        /opt/weewx-venv/bin/weectl extension install https://github.com/matthewwall/weewx-interceptor/archive/master.zip --config=$WEEWX_DATA/weewx.conf
+    fi
 
 fi
-/usr/share/weewx/weectl station reconfigure --driver=$DRIVER --latitude=$LATITUDE --longitude=$LONGITUDE --altitude=$ALTITUDE,$ALTITUDEUNIT --location=$LOCATION --units=$UNITS --no-prompt --config=$WEEWX_DATA/weewx.conf --sqlite-root=$WEEWX_DATA/archive --html-root=$WEEWX_DATA/public_html  --skin-root=$WEEWX_DATA/skins  --no-prompt
+/opt/weewx-venv/bin/weectl station reconfigure --driver=$DRIVER --latitude=$LATITUDE --longitude=$LONGITUDE --altitude=$ALTITUDE,$ALTITUDEUNIT --location=$LOCATION --units=$UNITS --no-prompt --config=$WEEWX_DATA/weewx.conf --sqlite-root=$WEEWX_DATA/archive --html-root=$WEEWX_DATA/public_html  --skin-root=$WEEWX_DATA/skins  --no-prompt
 
 
 
@@ -44,4 +50,4 @@ sed -i 's/week_start = 6/week_start = 0/g' $WEEWX_DATA/weewx.conf
 
 bashio::log.info "Starting Weewx..."
 
-/usr/share/weewx/weewxd --config=$WEEWX_DATA/weewx.conf
+/opt/weewx-venv/bin/weewxd --config=$WEEWX_DATA/weewx.conf
