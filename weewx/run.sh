@@ -32,16 +32,6 @@ bashio::log.info "Create default config..."
 fi
 /opt/weewx-venv/bin/weectl station reconfigure --driver=$DRIVER --latitude=$LATITUDE --longitude=$LONGITUDE --altitude=$ALTITUDE,$ALTITUDEUNIT --location=$LOCATION --units=$UNITS --no-prompt --config=$WEEWX_DATA/weewx.conf --sqlite-root=$WEEWX_DATA/archive --html-root=$WEEWX_DATA/public_html  --skin-root=$WEEWX_DATA/skins  --no-prompt
 
-
-
-
-sed -i '/INSERT_SERVER_URL_HERE/ a \
-\ \ \ \ \ \ \ \ topic = weather\
-\ \ \ \ \ \ \ \ unit_system = METRICWX\
-' $WEEWX_DATA/weewx.conf
-
-sed -i 's/INSERT_SERVER_URL_HERE/mqtt:\/\/'$MQTTUSER':'$MQTTPASSWORD'@core-mosquitto:1883/g' $WEEWX_DATA/weewx.conf
-
 sed -i 's/archive_interval = 300/archive_interval = 60/g' $WEEWX_DATA/weewx.conf
 
 sed -i 's/log_success = True/log_success = False/g' $WEEWX_DATA/weewx.conf
