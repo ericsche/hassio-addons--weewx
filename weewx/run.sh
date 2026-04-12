@@ -52,20 +52,9 @@ sed -i "s/location = .*/location = $LOCATION/g" "$WEEWX_CONF"
 sed -i 's/archive_interval = 300/archive_interval = 60/g' "$WEEWX_CONF"
 sed -i 's/week_start = 6/week_start = 0/g' "$WEEWX_CONF"
 
-# --- Enable debug mode temporarily for diagnostics ---
-sed -i 's/^debug = 0/debug = 1/' "$WEEWX_CONF"
-
 # --- Patch report skins using ConfigObj (reliable, no fragile sed) ---
 bashio::log.info "Patching report skins..."
 python3 /opt/report-patch.py "$WEEWX_CONF"
-
-# --- Diagnostics: dump StdReport section ---
-bashio::log.info "=== StdReport config ==="
-sed -n '/^\[StdReport\]/,/^\[/p' "$WEEWX_CONF" | head -40 || true
-bashio::log.info "=== Symlinks ==="
-ls -la /root/weewx-data/public_html /root/weewx-data/archive || true
-bashio::log.info "=== Skin dir ==="
-ls /root/weewx-data/skins/ || true
 
 # --- Start nginx to serve reports via HA ingress ---
 nginx

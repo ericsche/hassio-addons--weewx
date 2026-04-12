@@ -1,12 +1,14 @@
 ARG BUILD_FROM=ghcr.io/hassio-addons/debian-base/amd64:9.3.0
 FROM $BUILD_FROM
 
-ENV LANG=C.UTF-8
+ENV LANG=fr_FR.UTF-8
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         python3-pip python3-venv build-essential libpython3-dev \
-        curl unzip nginx \
+        curl unzip nginx locales \
+    && sed -i '/fr_FR.UTF-8/s/^# //' /etc/locale.gen \
+    && locale-gen fr_FR.UTF-8 \
     && rm -rf /var/lib/apt/lists/*
 
 RUN python3 -m venv /opt/weewx-venv
