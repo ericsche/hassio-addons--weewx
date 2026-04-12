@@ -45,8 +45,8 @@ RUN curl -fsSL -o /tmp/weewx-ecowittcustom.zip \
     && test -s /root/weewx-data/bin/user/ecowittcustom.py
 
 # 4. Fix logging: use console handler instead of syslog (no /dev/log in container)
-RUN sed -i 's/handlers = syslog,/handlers = console,/' /root/weewx-data/weewx.conf \
-    && sed -i '/facility = user/a\        [[[console]]]\n            level = DEBUG\n            formatter = standard\n            class = logging.StreamHandler\n            stream = ext://sys.stdout' /root/weewx-data/weewx.conf
+COPY logging-patch.py /opt/logging-patch.py
+RUN python3 /opt/logging-patch.py /root/weewx-data/weewx.conf
 
 COPY run.sh /
 RUN chmod 755 /run.sh

@@ -35,12 +35,7 @@ if grep -q 'handlers = syslog,' "$WEEWX_DATA/weewx.conf"; then
     sed -i 's/handlers = syslog,/handlers = console,/' "$WEEWX_DATA/weewx.conf"
 fi
 if ! grep -q '\[\[\[console\]\]\]' "$WEEWX_DATA/weewx.conf"; then
-    sed -i '/facility = user/a\\
-\        [[[console]]]\
-\            level = DEBUG\
-\            formatter = standard\
-\            class = logging.StreamHandler\
-\            stream = ext://sys.stdout' "$WEEWX_DATA/weewx.conf"
+    python3 /opt/logging-patch.py "$WEEWX_DATA/weewx.conf"
 fi
 
 # --- Ensure [Ecowittcustom] section exists ---
