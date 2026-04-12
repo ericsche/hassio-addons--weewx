@@ -46,13 +46,7 @@ RUN curl -fsSL -o /tmp/weewx-ecowittcustom.zip \
 
 # 4. Fix logging: use console handler instead of syslog (no /dev/log in container)
 RUN sed -i 's/handlers = syslog,/handlers = console,/' /root/weewx-data/weewx.conf \
-    && sed -i '/facility = user/a\\
-\        # Console logger for Docker container\
-\        [[[console]]]\
-\            level = DEBUG\
-\            formatter = standard\
-\            class = logging.StreamHandler\
-\            stream = ext://sys.stdout' /root/weewx-data/weewx.conf
+    && sed -i '/facility = user/a\        [[[console]]]\n            level = DEBUG\n            formatter = standard\n            class = logging.StreamHandler\n            stream = ext://sys.stdout' /root/weewx-data/weewx.conf
 
 COPY run.sh /
 RUN chmod 755 /run.sh
