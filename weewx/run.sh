@@ -61,6 +61,9 @@ sed -i 's/week_start = 6/week_start = 0/g' "$WEEWX_CONF"
 # --- Save patched config to persistent storage ---
 cp "$WEEWX_CONF" "$WEEWX_DATA/weewx.conf"
 
+# --- Start nginx to serve reports via HA ingress ---
+nginx
+
 # --- Start WeeWX (from image path — WEEWX_ROOT = /root/weewx-data) ---
 bashio::log.info "Starting Weewx..."
 exec /opt/weewx-venv/bin/weewxd --config="$WEEWX_CONF"

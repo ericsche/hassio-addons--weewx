@@ -6,7 +6,7 @@ ENV LANG=C.UTF-8
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         python3-pip python3-venv build-essential libpython3-dev \
-        curl unzip \
+        curl unzip nginx \
     && rm -rf /var/lib/apt/lists/*
 
 RUN python3 -m venv /opt/weewx-venv
@@ -48,6 +48,7 @@ RUN curl -fsSL -o /tmp/weewx-ecowittcustom.zip \
 COPY logging-patch.py /opt/logging-patch.py
 RUN python3 /opt/logging-patch.py /root/weewx-data/weewx.conf
 
+COPY nginx.conf /etc/nginx/nginx.conf
 COPY run.sh /
 RUN chmod 755 /run.sh
 

@@ -1,6 +1,6 @@
 {
   "name": "WeeWX",
-  "version": "1.0.42",
+  "version": "1.0.43",
   "slug": "hassio_weewx",
   "description": "Home Assistant app for connecting weather stations using WeeWX",
   "url": "https://github.com/ericsche/hassio-addons--weewx",
@@ -11,6 +11,10 @@
   ],
   "startup": "application",
   "boot": "auto",
+  "ingress": true,
+  "ingress_port": 8099,
+  "panel_icon": "mdi:weather-cloudy",
+  "panel_title": "WeeWX",
   "ports": {
     "8083/tcp": 8083
   },
