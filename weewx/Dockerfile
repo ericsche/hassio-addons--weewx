@@ -15,7 +15,7 @@ ENV PATH="/opt/weewx-venv/bin:$PATH"
 
 RUN /opt/weewx-venv/bin/pip install --no-cache-dir --upgrade pip \
     && /opt/weewx-venv/bin/pip install --no-cache-dir \
-        wheel configobj libpcap pyserial pyephem weewx
+        wheel configobj libpcap pyserial pyephem six weewx
 
 # Copy data for add-on
 COPY run.sh /
