@@ -25,13 +25,13 @@ bashio::log.info "Create default config..."
     # Install interceptor extension only if not already installed
     if ! grep -q "interceptor" "$WEEWX_DATA/weewx.conf"; then
         bashio::log.info "Installing interceptor extension..."
-        /opt/weewx-venv/bin/weectl extension install https://github.com/matthewwall/weewx-interceptor/archive/master.zip --config=$WEEWX_DATA/weewx.conf
+        /opt/weewx-venv/bin/weectl extension install https://github.com/matthewwall/weewx-interceptor/archive/master.zip --yes --config=$WEEWX_DATA/weewx.conf
     fi
 
     # Install neowx-material skin only if not already installed
     if ! grep -q "neowx-material" "$WEEWX_DATA/weewx.conf"; then
         bashio::log.info "Installing neowx-material skin..."
-        /opt/weewx-venv/bin/weectl extension install https://github.com/neoground/neowx-material/archive/master.zip --config=$WEEWX_DATA/weewx.conf
+        /opt/weewx-venv/bin/weectl extension install https://github.com/neoground/neowx-material/archive/master.zip --yes --config=$WEEWX_DATA/weewx.conf
     fi
 
     # Copy EN and FR language files for neowx-material skin
@@ -45,7 +45,7 @@ bashio::log.info "Create default config..."
     # Install ecowittcustom driver/extension only if not already installed
     if ! grep -q "ecowittcustom" "$WEEWX_DATA/weewx.conf"; then
         bashio::log.info "Installing ecowittcustom extension..."
-        /opt/weewx-venv/bin/weectl extension install https://github.com/WernerKr/Ecowitt-or-DAVIS-stations-and-Season-skin/raw/refs/heads/main/weewx-ecowittcustom.zip --config=$WEEWX_DATA/weewx.conf
+        /opt/weewx-venv/bin/weectl extension install https://github.com/WernerKr/Ecowitt-or-DAVIS-stations-and-Season-skin/raw/refs/heads/main/weewx-ecowittcustom.zip --yes --config=$WEEWX_DATA/weewx.conf
     fi
 
     # Install SeasonsEcowitt skin only if not already installed
