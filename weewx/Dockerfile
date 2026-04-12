@@ -10,14 +10,50 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 RUN python3 -m venv /opt/weewx-venv
-
 ENV PATH="/opt/weewx-venv/bin:$PATH"
+ENV PYTHONPATH="/root/weewx-data/bin"
 
-RUN /opt/weewx-venv/bin/pip install --no-cache-dir --upgrade pip \
-    && /opt/weewx-venv/bin/pip install --no-cache-dir \
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir \
         wheel configobj libpcap pyserial pyephem six weewx
 
-# Copy data for add-on
+# ---------------------------------------------------------------------------
+# Build-time setup: create station, install extensions, place driver files
+# (syslog warnings during weectl are non-fatal — no /dev/log in build env)
+# ---------------------------------------------------------------------------
+
+# 1. Create default WeeWX station (provides bin/user/, skins/, config template)
+RUN weectl station create \
+        --driver=weewx.drivers.simulator \
+        --latitude=0 --longitude=0 \
+        --altitude=0,meter \
+        --location="Home" --units=metricwx \
+        --no-prompt 2>&1 \
+    && test -f /root/weewx-data/weewx.conf
+
+# 2. Install neowx-material skin (seehase fork — actively maintained, 11 languages)
+RUN weectl extension install \
+        https://github.com/seehase/neowx-material/archive/refs/heads/master.zip \
+        --yes 2>&1 \
+    && test -d /root/weewx-data/skins/neowx-material
+
+# 3. Install ecowittcustom driver via official zip package
+RUN curl -fsSL -o /tmp/weewx-ecowittcustom.zip \
+        "https://github.com/WernerKr/Ecowitt-or-DAVIS-stations-and-Season-skin/raw/refs/heads/main/weewx-ecowittcustom.zip" \
+    && weectl extension install /tmp/weewx-ecowittcustom.zip --yes 2>&1 \
+    && rm -f /tmp/weewx-ecowittcustom.zip \
+    && test -s /root/weewx-data/bin/user/ecowittcustom.py
+
+# 4. Fix logging: use console handler instead of syslog (no /dev/log in container)
+RUN sed -i 's/handlers = syslog,/handlers = console,/' /root/weewx-data/weewx.conf \
+    && sed -i '/facility = user/a\\
+\        # Console logger for Docker container\
+\        [[[console]]]\
+\            level = DEBUG\
+\            formatter = standard\
+\            class = logging.StreamHandler\
+\            stream = ext://sys.stdout' /root/weewx-data/weewx.conf
+
 COPY run.sh /
 RUN chmod 755 /run.sh
 

@@ -10,56 +10,45 @@ ALTITUDEUNIT="$(jq --raw-output '.altitudeUnit' $CONFIG_PATH)"
 LOCATION="$(jq --raw-output '.location' $CONFIG_PATH)"
 UNITS="$(jq --raw-output '.units' $CONFIG_PATH)"
 
-export WEEWX_DATA="$(bashio::config 'data_path')"
+WEEWX_DATA="$(bashio::config 'data_path')"
 
-# Ensure PYTHONPATH includes the user module directory so weewxd can find user.* extensions
-export PYTHONPATH="/root/weewx-data/bin:${PYTHONPATH:-}"
-
-# --- Step 1: Create station config if it doesn't exist ---
+# --- First run: copy pre-built config from image ---
 if ! bashio::fs.file_exists "$WEEWX_DATA/weewx.conf"; then
-    mkdir -p "$WEEWX_DATA" || bashio::exit.nok "Could not create $WEEWX_DATA"
-
-    bashio::log.info "Create default config..."
-    /opt/weewx-venv/bin/weectl station create \
-        --driver=weewx.drivers.simulator \
-        --latitude=$LATITUDE --longitude=$LONGITUDE \
-        --altitude=$ALTITUDE,$ALTITUDEUNIT \
-        --location="$LOCATION" --units=$UNITS \
-        --no-prompt \
-        --config=$WEEWX_DATA/weewx.conf \
-        --sqlite-root=$WEEWX_DATA/archive \
-        --html-root=$WEEWX_DATA/public_html \
-        --skin-root=$WEEWX_DATA/skins
+    mkdir -p "$WEEWX_DATA"
+    bashio::log.info "First run: copying pre-built configuration..."
+    cp /root/weewx-data/weewx.conf "$WEEWX_DATA/weewx.conf"
 fi
 
-# --- Step 2: Install extensions (idempotent, run every start) ---
+# --- Symlink persistent storage into WEEWX_ROOT ---
+# Database and HTML output persist across restarts in /config/weewx/
+# Skins and user modules stay in the image and update on rebuild
+mkdir -p "$WEEWX_DATA/archive" "$WEEWX_DATA/public_html"
+rm -rf /root/weewx-data/archive /root/weewx-data/public_html
+ln -sf "$WEEWX_DATA/archive" /root/weewx-data/archive
+ln -sf "$WEEWX_DATA/public_html" /root/weewx-data/public_html
 
-# Install neowx-material skin (seehase fork - actively maintained, has install.py)
-if ! grep -q "neowx-material" "$WEEWX_DATA/weewx.conf"; then
-    bashio::log.info "Installing neowx-material skin..."
-    /opt/weewx-venv/bin/weectl extension install \
-        https://github.com/seehase/neowx-material/archive/refs/heads/master.zip \
-        --yes --config=$WEEWX_DATA/weewx.conf
+# --- Ensure SKIN_ROOT points to image skins (updated on each rebuild) ---
+sed -i 's|SKIN_ROOT = /config/weewx/skins|SKIN_ROOT = /root/weewx-data/skins|g' "$WEEWX_DATA/weewx.conf"
+
+# --- Fix logging: use console instead of syslog (no /dev/log in container) ---
+if grep -q 'handlers = syslog,' "$WEEWX_DATA/weewx.conf"; then
+    sed -i 's/handlers = syslog,/handlers = console,/' "$WEEWX_DATA/weewx.conf"
+fi
+if ! grep -q '\[\[\[console\]\]\]' "$WEEWX_DATA/weewx.conf"; then
+    sed -i '/facility = user/a\\
+\        [[[console]]]\
+\            level = DEBUG\
+\            formatter = standard\
+\            class = logging.StreamHandler\
+\            stream = ext://sys.stdout' "$WEEWX_DATA/weewx.conf"
 fi
 
-# Install ecowittcustom driver/extension
-if ! grep -q "ecowittcustom" "$WEEWX_DATA/weewx.conf"; then
-    bashio::log.info "Installing ecowittcustom extension..."
-    curl -sL -o /tmp/weewx-ecowittcustom.zip \
-        https://github.com/WernerKr/Ecowitt-or-DAVIS-stations-and-Season-skin/raw/refs/heads/main/weewx-ecowittcustom.zip
-    /opt/weewx-venv/bin/weectl extension install /tmp/weewx-ecowittcustom.zip \
-        --yes --config=$WEEWX_DATA/weewx.conf
-    rm -f /tmp/weewx-ecowittcustom.zip
-fi
-
-# Ensure [Ecowittcustom] section exists in weewx.conf (the extension installer should add it,
-# but if it didn't, add a minimal one so weewxd can find the driver config)
+# --- Ensure [Ecowittcustom] section exists ---
 if ! grep -q '^\[Ecowittcustom\]' "$WEEWX_DATA/weewx.conf"; then
-    bashio::log.info "Adding [Ecowittcustom] driver section to weewx.conf..."
+    bashio::log.info "Adding [Ecowittcustom] driver section..."
     cat >> "$WEEWX_DATA/weewx.conf" <<'EOF'
 
 [Ecowittcustom]
-    # This section is for the network traffic ecowittcustom driver.
     driver = user.ecowittcustom
     device_type = ecowitt-client
     port = 8083
@@ -67,22 +56,7 @@ if ! grep -q '^\[Ecowittcustom\]' "$WEEWX_DATA/weewx.conf"; then
 EOF
 fi
 
-# Install SeasonsEcowitt skin
-if [ ! -d "$WEEWX_DATA/skins/SeasonsEcowitt" ]; then
-    bashio::log.info "Installing SeasonsEcowitt skin..."
-    curl -sL -o /tmp/SeasonsEcowitt.zip \
-        https://github.com/WernerKr/Ecowitt-or-DAVIS-stations-and-Season-skin/raw/refs/heads/main/skins/SeasonsEcowitt.zip
-    unzip -qo /tmp/SeasonsEcowitt.zip -d "$WEEWX_DATA/skins/"
-    rm -f /tmp/SeasonsEcowitt.zip
-fi
-
-# Add SeasonsEcowitt report to weewx.conf
-if ! grep -q "SeasonsEcowitt" "$WEEWX_DATA/weewx.conf"; then
-    bashio::log.info "Adding SeasonsEcowitt report config..."
-    sed -i '/\[\[SeasonsReport\]\]/i\    [[SeasonsEcowitt]]\n        skin = SeasonsEcowitt\n        enable = true\n        lang = en\n        HTML_ROOT = public_html/ecowitt\n' "$WEEWX_DATA/weewx.conf"
-fi
-
-# --- Step 3: Apply station settings via sed ---
+# --- Apply station settings ---
 sed -i "s/station_type = Simulator/station_type = Ecowittcustom/g" "$WEEWX_DATA/weewx.conf"
 sed -i "s/latitude = .*/latitude = $LATITUDE/g" "$WEEWX_DATA/weewx.conf"
 sed -i "s/longitude = .*/longitude = $LONGITUDE/g" "$WEEWX_DATA/weewx.conf"
@@ -91,6 +65,6 @@ sed -i 's/archive_interval = 300/archive_interval = 60/g' "$WEEWX_DATA/weewx.con
 sed -i 's/log_success = True/log_success = False/g' "$WEEWX_DATA/weewx.conf"
 sed -i 's/week_start = 6/week_start = 0/g' "$WEEWX_DATA/weewx.conf"
 
-# --- Step 4: Start WeeWX ---
+# --- Start WeeWX ---
 bashio::log.info "Starting Weewx..."
-/opt/weewx-venv/bin/weewxd --config=$WEEWX_DATA/weewx.conf
+exec /opt/weewx-venv/bin/weewxd --config="$WEEWX_DATA/weewx.conf"
