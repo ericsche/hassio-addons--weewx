@@ -2,6 +2,7 @@
 bashio::log.info "Preparing to start..."
 
 CONFIG_PATH=/data/options.json
+WEEWX_CONF=/root/weewx-data/weewx.conf
 
 LATITUDE="$(jq --raw-output '.latitude' $CONFIG_PATH)"
 LONGITUDE="$(jq --raw-output '.longitude' $CONFIG_PATH)"
@@ -11,31 +12,31 @@ LOCATION="$(jq --raw-output '.location' $CONFIG_PATH)"
 UNITS="$(jq --raw-output '.units' $CONFIG_PATH)"
 
 WEEWX_DATA="$(bashio::config 'data_path')"
+mkdir -p "$WEEWX_DATA"
 
-# --- First run: copy pre-built config from image ---
-if ! bashio::fs.file_exists "$WEEWX_DATA/weewx.conf"; then
-    mkdir -p "$WEEWX_DATA"
-    bashio::log.info "First run: copying pre-built configuration..."
-    cp /root/weewx-data/weewx.conf "$WEEWX_DATA/weewx.conf"
+# --- Config persistence ---
+# weewxd always runs from /root/weewx-data/ so WEEWX_ROOT stays correct
+# and bin/user/ modules are found. Persistent copy lives in /config/weewx/.
+if bashio::fs.file_exists "$WEEWX_DATA/weewx.conf"; then
+    bashio::log.info "Restoring persistent configuration..."
+    cp "$WEEWX_DATA/weewx.conf" "$WEEWX_CONF"
+else
+    bashio::log.info "First run: initializing persistent configuration..."
 fi
 
-# --- Force WEEWX_ROOT to the image path (where bin/user/ and skins/ live) ---
-sed -i 's|^WEEWX_ROOT =.*|WEEWX_ROOT = /root/weewx-data|' "$WEEWX_DATA/weewx.conf"
-
-# --- Symlink persistent storage into WEEWX_ROOT ---
-# Database and HTML output persist in /config/weewx/ via symlinks
+# --- Symlink persistent data dirs into WEEWX_ROOT ---
 mkdir -p "$WEEWX_DATA/archive" "$WEEWX_DATA/public_html"
 rm -rf /root/weewx-data/archive /root/weewx-data/public_html
 ln -sf "$WEEWX_DATA/archive" /root/weewx-data/archive
 ln -sf "$WEEWX_DATA/public_html" /root/weewx-data/public_html
 
-# --- Fix logging: use console instead of syslog (no /dev/log in container) ---
-python3 /opt/logging-patch.py "$WEEWX_DATA/weewx.conf"
+# --- Fix logging: use console instead of syslog ---
+python3 /opt/logging-patch.py "$WEEWX_CONF"
 
 # --- Ensure [Ecowittcustom] section exists ---
-if ! grep -q '^\[Ecowittcustom\]' "$WEEWX_DATA/weewx.conf"; then
+if ! grep -q '^\[Ecowittcustom\]' "$WEEWX_CONF"; then
     bashio::log.info "Adding [Ecowittcustom] driver section..."
-    cat >> "$WEEWX_DATA/weewx.conf" <<'EOF'
+    cat >> "$WEEWX_CONF" <<'EOF'
 
 [Ecowittcustom]
     driver = user.ecowittcustom
@@ -46,14 +47,17 @@ EOF
 fi
 
 # --- Apply station settings ---
-sed -i "s/station_type = Simulator/station_type = Ecowittcustom/g" "$WEEWX_DATA/weewx.conf"
-sed -i "s/latitude = .*/latitude = $LATITUDE/g" "$WEEWX_DATA/weewx.conf"
-sed -i "s/longitude = .*/longitude = $LONGITUDE/g" "$WEEWX_DATA/weewx.conf"
-sed -i "s/location = .*/location = $LOCATION/g" "$WEEWX_DATA/weewx.conf"
-sed -i 's/archive_interval = 300/archive_interval = 60/g' "$WEEWX_DATA/weewx.conf"
-sed -i 's/log_success = True/log_success = False/g' "$WEEWX_DATA/weewx.conf"
-sed -i 's/week_start = 6/week_start = 0/g' "$WEEWX_DATA/weewx.conf"
+sed -i "s/station_type = Simulator/station_type = Ecowittcustom/g" "$WEEWX_CONF"
+sed -i "s/latitude = .*/latitude = $LATITUDE/g" "$WEEWX_CONF"
+sed -i "s/longitude = .*/longitude = $LONGITUDE/g" "$WEEWX_CONF"
+sed -i "s/location = .*/location = $LOCATION/g" "$WEEWX_CONF"
+sed -i 's/archive_interval = 300/archive_interval = 60/g' "$WEEWX_CONF"
+sed -i 's/log_success = True/log_success = False/g' "$WEEWX_CONF"
+sed -i 's/week_start = 6/week_start = 0/g' "$WEEWX_CONF"
 
-# --- Start WeeWX ---
+# --- Save patched config to persistent storage ---
+cp "$WEEWX_CONF" "$WEEWX_DATA/weewx.conf"
+
+# --- Start WeeWX (from image path — WEEWX_ROOT = /root/weewx-data) ---
 bashio::log.info "Starting Weewx..."
-exec /opt/weewx-venv/bin/weewxd --config="$WEEWX_DATA/weewx.conf"
+exec /opt/weewx-venv/bin/weewxd --config="$WEEWX_CONF"
