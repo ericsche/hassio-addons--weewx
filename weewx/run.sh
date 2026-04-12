@@ -14,15 +14,10 @@ UNITS="$(jq --raw-output '.units' $CONFIG_PATH)"
 WEEWX_DATA="$(bashio::config 'data_path')"
 mkdir -p "$WEEWX_DATA"
 
-# --- Config persistence ---
-# weewxd always runs from /root/weewx-data/ so WEEWX_ROOT stays correct
-# and bin/user/ modules are found. Persistent copy lives in /config/weewx/.
-if bashio::fs.file_exists "$WEEWX_DATA/weewx.conf"; then
-    bashio::log.info "Restoring persistent configuration..."
-    cp "$WEEWX_DATA/weewx.conf" "$WEEWX_CONF"
-else
-    bashio::log.info "First run: initializing persistent configuration..."
-fi
+# --- Config: always start from the image's fresh config ---
+# The image config has all extensions, skins, SKIN_ROOT etc. correctly set
+# from build time. run.sh applies user settings on top. No need to persist
+# weewx.conf — only database (archive/) and reports (public_html/) persist.
 
 # --- Symlink persistent data dirs into WEEWX_ROOT ---
 mkdir -p "$WEEWX_DATA/archive" "$WEEWX_DATA/public_html"
@@ -52,8 +47,9 @@ sed -i '/^\[Ecowittcustom\]/,/^\[/{s/port = .*/port = 8083/}' "$WEEWX_CONF"
 # --- Ensure neowx-material skin report is configured ---
 if ! grep -q 'neowx-material' "$WEEWX_CONF"; then
     bashio::log.info "Adding neowx-material report section..."
+    # Insert after the HTML_ROOT line inside [StdReport]
     sed -i '/^\[StdReport\]/,/^\[/{
-        /^\[StdReport\]/a\
+        /HTML_ROOT = public_html/a\
 \    [[neowx-material]]\
 \        skin = neowx-material\
 \        enable = true\
@@ -70,9 +66,6 @@ sed -i "s/location = .*/location = $LOCATION/g" "$WEEWX_CONF"
 sed -i 's/archive_interval = 300/archive_interval = 60/g' "$WEEWX_CONF"
 sed -i 's/log_success = True/log_success = False/g' "$WEEWX_CONF"
 sed -i 's/week_start = 6/week_start = 0/g' "$WEEWX_CONF"
-
-# --- Save patched config to persistent storage ---
-cp "$WEEWX_CONF" "$WEEWX_DATA/weewx.conf"
 
 # --- Start nginx to serve reports via HA ingress ---
 nginx
