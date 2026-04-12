@@ -46,6 +46,9 @@ if ! grep -q '^\[Ecowittcustom\]' "$WEEWX_CONF"; then
 EOF
 fi
 
+# Force correct port in [Ecowittcustom] (persistent config may have old value)
+sed -i '/^\[Ecowittcustom\]/,/^\[/{s/port = .*/port = 8083/}' "$WEEWX_CONF"
+
 # --- Apply station settings ---
 sed -i "s/station_type = Simulator/station_type = Ecowittcustom/g" "$WEEWX_CONF"
 sed -i "s/latitude = .*/latitude = $LATITUDE/g" "$WEEWX_CONF"
