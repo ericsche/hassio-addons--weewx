@@ -1,6 +1,6 @@
 {
   "name": "WeeWX",
-  "version": "1.0.48",
+  "version": "1.0.49",
   "slug": "hassio_weewx",
   "description": "Home Assistant app for connecting weather stations using WeeWX",
   "url": "https://github.com/ericsche/hassio-addons--weewx",
