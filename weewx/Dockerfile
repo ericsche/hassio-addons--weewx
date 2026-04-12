@@ -2,6 +2,7 @@ ARG BUILD_FROM=ghcr.io/hassio-addons/debian-base/amd64:9.3.0
 FROM $BUILD_FROM
 
 ENV LANG=fr_FR.UTF-8
+ENV LC_ALL=fr_FR.UTF-8
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \

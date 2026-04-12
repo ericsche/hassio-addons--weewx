@@ -60,5 +60,7 @@ python3 /opt/report-patch.py "$WEEWX_CONF"
 nginx
 
 # --- Start WeeWX (from image path — WEEWX_ROOT = /root/weewx-data) ---
+export LANG=fr_FR.UTF-8
+export LC_ALL=fr_FR.UTF-8
 bashio::log.info "Starting Weewx..."
 exec /opt/weewx-venv/bin/weewxd --config="$WEEWX_CONF"
