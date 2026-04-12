@@ -19,24 +19,18 @@ if ! bashio::fs.file_exists "$WEEWX_DATA/weewx.conf"; then
     cp /root/weewx-data/weewx.conf "$WEEWX_DATA/weewx.conf"
 fi
 
+# --- Force WEEWX_ROOT to the image path (where bin/user/ and skins/ live) ---
+sed -i 's|^WEEWX_ROOT =.*|WEEWX_ROOT = /root/weewx-data|' "$WEEWX_DATA/weewx.conf"
+
 # --- Symlink persistent storage into WEEWX_ROOT ---
-# Database and HTML output persist across restarts in /config/weewx/
-# Skins and user modules stay in the image and update on rebuild
+# Database and HTML output persist in /config/weewx/ via symlinks
 mkdir -p "$WEEWX_DATA/archive" "$WEEWX_DATA/public_html"
 rm -rf /root/weewx-data/archive /root/weewx-data/public_html
 ln -sf "$WEEWX_DATA/archive" /root/weewx-data/archive
 ln -sf "$WEEWX_DATA/public_html" /root/weewx-data/public_html
 
-# --- Ensure SKIN_ROOT points to image skins (updated on each rebuild) ---
-sed -i 's|SKIN_ROOT = /config/weewx/skins|SKIN_ROOT = /root/weewx-data/skins|g' "$WEEWX_DATA/weewx.conf"
-
 # --- Fix logging: use console instead of syslog (no /dev/log in container) ---
-if grep -q 'handlers = syslog,' "$WEEWX_DATA/weewx.conf"; then
-    sed -i 's/handlers = syslog,/handlers = console,/' "$WEEWX_DATA/weewx.conf"
-fi
-if ! grep -q '\[\[\[console\]\]\]' "$WEEWX_DATA/weewx.conf"; then
-    python3 /opt/logging-patch.py "$WEEWX_DATA/weewx.conf"
-fi
+python3 /opt/logging-patch.py "$WEEWX_DATA/weewx.conf"
 
 # --- Ensure [Ecowittcustom] section exists ---
 if ! grep -q '^\[Ecowittcustom\]' "$WEEWX_DATA/weewx.conf"; then

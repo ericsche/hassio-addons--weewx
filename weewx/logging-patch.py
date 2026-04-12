@@ -1,4 +1,5 @@
 """Patch weewx.conf to use console logging instead of syslog."""
+import re
 import sys
 
 CONSOLE_BLOCK = """\
@@ -12,8 +13,10 @@ path = sys.argv[1]
 with open(path, "r") as f:
     text = f.read()
 
-text = text.replace("handlers = syslog,", "handlers = console,")
+# Replace syslog handler with console (handle varying whitespace)
+text = re.sub(r'handlers\s*=\s*syslog\s*,', 'handlers = console,', text)
 
+# Add console handler definition if not already present
 if "[[[console]]]" not in text:
     text = text.replace(
         "facility = user",
