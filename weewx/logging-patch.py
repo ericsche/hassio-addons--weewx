@@ -16,7 +16,7 @@ config = ConfigObj(path, encoding='utf-8', default_encoding='utf-8',
 # WeeWX merges this on top of its LOGGING_STR defaults.
 config['Logging'] = {
     'root': {
-        'handlers': 'console,',
+        'handlers': ['console'],
     },
     'handlers': {
         'console': {
