@@ -7,7 +7,6 @@ DATA_PATH=$(bashio::config 'data_path')
 
 
 
-DRIVER="$(jq --raw-output '.driver' $CONFIG_PATH)"
 LATITUDE="$(jq --raw-output '.latitude' $CONFIG_PATH)"
 LONGITUDE="$(jq --raw-output '.longitude' $CONFIG_PATH)"
 ALTITUDE="$(jq --raw-output '.altitude' $CONFIG_PATH)"
@@ -21,7 +20,7 @@ if ! bashio::fs.file_exists "$WEEWX_DATA/weewx.conf"; then
     mkdir -p "$WEEWX_DATA" || bashio::exit.nok "Could not create $WEEWX_DATA"
 
 bashio::log.info "Create default config..."
-/opt/weewx-venv/bin/weectl station create --driver=$DRIVER --latitude=$LATITUDE --longitude=$LONGITUDE --altitude=$ALTITUDE,$ALTITUDEUNIT --location=$LOCATION --units=$UNITS --no-prompt --config=$WEEWX_DATA/weewx.conf --sqlite-root=$WEEWX_DATA/archive --html-root=$WEEWX_DATA/public_html  --skin-root=$WEEWX_DATA/skins  --no-prompt
+/opt/weewx-venv/bin/weectl station create --driver=weewx.drivers.simulator --latitude=$LATITUDE --longitude=$LONGITUDE --altitude=$ALTITUDE,$ALTITUDEUNIT --location=$LOCATION --units=$UNITS --no-prompt --config=$WEEWX_DATA/weewx.conf --sqlite-root=$WEEWX_DATA/archive --html-root=$WEEWX_DATA/public_html  --skin-root=$WEEWX_DATA/skins  --no-prompt
 
     # Install interceptor extension only if not already installed
     if ! grep -q "interceptor" "$WEEWX_DATA/weewx.conf"; then
@@ -64,7 +63,7 @@ bashio::log.info "Create default config..."
     fi
 
 fi
-/opt/weewx-venv/bin/weectl station reconfigure --driver=$DRIVER --latitude=$LATITUDE --longitude=$LONGITUDE --altitude=$ALTITUDE,$ALTITUDEUNIT --location=$LOCATION --units=$UNITS --no-prompt --config=$WEEWX_DATA/weewx.conf --sqlite-root=$WEEWX_DATA/archive --html-root=$WEEWX_DATA/public_html  --skin-root=$WEEWX_DATA/skins  --no-prompt
+/opt/weewx-venv/bin/weectl station reconfigure --driver=user.ecowittcustom --latitude=$LATITUDE --longitude=$LONGITUDE --altitude=$ALTITUDE,$ALTITUDEUNIT --location=$LOCATION --units=$UNITS --no-prompt --config=$WEEWX_DATA/weewx.conf --sqlite-root=$WEEWX_DATA/archive --html-root=$WEEWX_DATA/public_html  --skin-root=$WEEWX_DATA/skins  --no-prompt
 
 sed -i 's/archive_interval = 300/archive_interval = 60/g' $WEEWX_DATA/weewx.conf
 

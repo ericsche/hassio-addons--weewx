@@ -1,6 +1,6 @@
 {
   "name": "WeeWX",
-  "version": "1.0.26",
+  "version": "1.0.27",
   "slug": "hassio_weewx",
   "description": "Home Assistant app for connecting weather stations using WeeWX",
   "url": "https://github.com/ericsche/hassio-addons--weewx",
@@ -24,7 +24,6 @@
   ],
   "options": {
     "data_path": "/config/weewx",
-    "driver": "user.ecowittcustom",
     "latitude": 47.5079,
     "longitude": 3.8406,
     "altitude": 134,
@@ -34,7 +33,6 @@
   },
   "schema": {
     "data_path": "str",
-    "driver": "str",
     "latitude": "float",
     "longitude": "float",
     "altitude": "int",
