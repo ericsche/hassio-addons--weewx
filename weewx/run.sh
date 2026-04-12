@@ -53,6 +53,28 @@ sed -i 's/archive_interval = 300/archive_interval = 60/g' "$WEEWX_CONF"
 sed -i 's/log_success = True/log_success = False/g' "$WEEWX_CONF"
 sed -i 's/week_start = 6/week_start = 0/g' "$WEEWX_CONF"
 
+# --- Disable default skins, keep only neowx-material ---
+sed -i '/^\[\[SeasonsReport\]\]/,/^\[\[/{s/enable = true/enable = false/}' "$WEEWX_CONF"
+sed -i '/^\[\[SmartphoneReport\]\]/,/^\[\[/{s/enable = true/enable = false/}' "$WEEWX_CONF"
+sed -i '/^\[\[MobileReport\]\]/,/^\[\[/{s/enable = true/enable = false/}' "$WEEWX_CONF"
+sed -i '/^\[\[StandardReport\]\]/,/^\[\[/{s/enable = true/enable = false/}' "$WEEWX_CONF"
+
+# --- Ensure neowx-material generates to public_html root ---
+# neowx-material uses lang=fr and metricwx units
+sed -i '/^\[\[neowx-material\]\]/,/^\[\[/{s/enable = false/enable = true/}' "$WEEWX_CONF"
+
+# --- Clean stale reports from persistent storage ---
+# Only on first run with this version — remove old 2025 reports
+if [ ! -f "$WEEWX_DATA/.reports_cleaned" ]; then
+    bashio::log.info "Cleaning old reports from persistent storage..."
+    find "$WEEWX_DATA/public_html" -type f -delete 2>/dev/null || true
+    touch "$WEEWX_DATA/.reports_cleaned"
+fi
+
+# --- Log active report skins for debugging ---
+bashio::log.info "Active report skins:"
+grep -A2 '^\[\[.*\]\]' "$WEEWX_CONF" | grep -B1 'enable = true' | grep '^\[\[' || true
+
 # --- Start nginx to serve reports via HA ingress ---
 nginx
 
