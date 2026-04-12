@@ -25,7 +25,7 @@ bashio::log.info "Create default config..."
     # Install neowx-material skin only if not already installed
     if ! grep -q "neowx-material" "$WEEWX_DATA/weewx.conf"; then
         bashio::log.info "Installing neowx-material skin..."
-        /opt/weewx-venv/bin/weectl extension install https://github.com/neoground/neowx-material/archive/master.zip --yes --config=$WEEWX_DATA/weewx.conf
+        /opt/weewx-venv/bin/weectl extension install https://github.com/neoground/neowx-material/releases/download/1.11/neowx-material-1.11.zip --yes --config=$WEEWX_DATA/weewx.conf
     fi
 
     # Copy EN and FR language files for neowx-material skin
