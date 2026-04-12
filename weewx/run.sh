@@ -50,23 +50,22 @@ sed -i "s/latitude = .*/latitude = $LATITUDE/g" "$WEEWX_CONF"
 sed -i "s/longitude = .*/longitude = $LONGITUDE/g" "$WEEWX_CONF"
 sed -i "s/location = .*/location = $LOCATION/g" "$WEEWX_CONF"
 sed -i 's/archive_interval = 300/archive_interval = 60/g' "$WEEWX_CONF"
-sed -i 's/log_success = True/log_success = False/g' "$WEEWX_CONF"
 sed -i 's/week_start = 6/week_start = 0/g' "$WEEWX_CONF"
 
-# --- Disable default skins, keep only neowx-material ---
-# Note: neowx-material installer overwrites [[StandardReport]] with skin = neowx-material
-# so [[StandardReport]] must stay ENABLED — it IS the neowx-material skin.
-# Section headers are indented (e.g. "    [[SeasonsReport]]") so match with leading whitespace.
-sed -i '/\[\[SeasonsReport\]\]/,/\[\[/{s/enable = true/enable = false/}' "$WEEWX_CONF"
-sed -i '/\[\[SmartphoneReport\]\]/,/\[\[/{s/enable = true/enable = false/}' "$WEEWX_CONF"
-sed -i '/\[\[MobileReport\]\]/,/\[\[/{s/enable = true/enable = false/}' "$WEEWX_CONF"
+# --- Enable debug mode temporarily for diagnostics ---
+sed -i 's/^debug = 0/debug = 1/' "$WEEWX_CONF"
 
-# Ensure StandardReport (= neowx-material) is enabled
-sed -i '/\[\[StandardReport\]\]/,/\[\[/{s/enable = false/enable = true/}' "$WEEWX_CONF"
+# --- Patch report skins using ConfigObj (reliable, no fragile sed) ---
+bashio::log.info "Patching report skins..."
+python3 /opt/report-patch.py "$WEEWX_CONF"
 
-# --- Log active report skins for debugging ---
-bashio::log.info "Active report skins:"
-grep -A2 '\[\[.*Report\]\]' "$WEEWX_CONF" | grep -B1 'enable' || true
+# --- Diagnostics: dump StdReport section ---
+bashio::log.info "=== StdReport config ==="
+sed -n '/^\[StdReport\]/,/^\[/p' "$WEEWX_CONF" | head -40
+bashio::log.info "=== Symlinks ==="
+ls -la /root/weewx-data/public_html /root/weewx-data/archive || true
+bashio::log.info "=== Skin dir ==="
+ls /root/weewx-data/skins/ || true
 
 # --- Start nginx to serve reports via HA ingress ---
 nginx

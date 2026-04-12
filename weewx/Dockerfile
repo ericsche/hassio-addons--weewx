@@ -46,6 +46,7 @@ RUN curl -fsSL -o /tmp/weewx-ecowittcustom.zip \
 
 # 4. Fix logging: use console handler instead of syslog (no /dev/log in container)
 COPY logging-patch.py /opt/logging-patch.py
+COPY report-patch.py /opt/report-patch.py
 RUN python3 /opt/logging-patch.py /root/weewx-data/weewx.conf
 
 COPY nginx.conf /etc/nginx/nginx.conf
