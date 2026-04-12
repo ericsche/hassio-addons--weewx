@@ -53,9 +53,11 @@ fi
 # Install ecowittcustom driver/extension
 if ! grep -q "ecowittcustom" "$WEEWX_DATA/weewx.conf"; then
     bashio::log.info "Installing ecowittcustom extension..."
-    /opt/weewx-venv/bin/weectl extension install \
-        https://github.com/WernerKr/Ecowitt-or-DAVIS-stations-and-Season-skin/raw/refs/heads/main/weewx-ecowittcustom.zip \
+    curl -sL -o /tmp/weewx-ecowittcustom.zip \
+        https://github.com/WernerKr/Ecowitt-or-DAVIS-stations-and-Season-skin/raw/refs/heads/main/weewx-ecowittcustom.zip
+    /opt/weewx-venv/bin/weectl extension install /tmp/weewx-ecowittcustom.zip \
         --yes --config=$WEEWX_DATA/weewx.conf
+    rm -f /tmp/weewx-ecowittcustom.zip
 fi
 
 # Ensure [Ecowittcustom] section exists in weewx.conf (the extension installer should add it,
