@@ -34,20 +34,12 @@ fi
 
 # --- Step 2: Install extensions (idempotent, run every start) ---
 
-# Install neowx-material skin
+# Install neowx-material skin (seehase fork - actively maintained, has install.py)
 if ! grep -q "neowx-material" "$WEEWX_DATA/weewx.conf"; then
     bashio::log.info "Installing neowx-material skin..."
     /opt/weewx-venv/bin/weectl extension install \
-        https://github.com/neoground/neowx-material/releases/download/1.11/neowx-material-1.11.zip \
+        https://github.com/seehase/neowx-material/archive/refs/heads/master.zip \
         --yes --config=$WEEWX_DATA/weewx.conf
-fi
-
-# Copy EN and FR language files for neowx-material skin
-if [ -d "$WEEWX_DATA/skins/neowx-material" ]; then
-    mkdir -p "$WEEWX_DATA/skins/neowx-material/lang"
-    cp -f /opt/weewx-lang/en.conf "$WEEWX_DATA/skins/neowx-material/lang/en.conf"
-    cp -f /opt/weewx-lang/fr.conf "$WEEWX_DATA/skins/neowx-material/lang/fr.conf"
-    bashio::log.info "Installed EN and FR language files for neowx-material skin"
 fi
 
 # Install ecowittcustom driver/extension

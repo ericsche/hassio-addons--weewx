@@ -19,7 +19,6 @@ RUN /opt/weewx-venv/bin/pip install --no-cache-dir --upgrade pip \
 
 # Copy data for add-on
 COPY run.sh /
-COPY lang/ /opt/weewx-lang/
 RUN chmod 755 /run.sh
 
 CMD [ "/run.sh" ]
