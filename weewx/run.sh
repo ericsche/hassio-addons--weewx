@@ -61,7 +61,7 @@ python3 /opt/report-patch.py "$WEEWX_CONF"
 
 # --- Diagnostics: dump StdReport section ---
 bashio::log.info "=== StdReport config ==="
-sed -n '/^\[StdReport\]/,/^\[/p' "$WEEWX_CONF" | head -40
+sed -n '/^\[StdReport\]/,/^\[/p' "$WEEWX_CONF" | head -40 || true
 bashio::log.info "=== Symlinks ==="
 ls -la /root/weewx-data/public_html /root/weewx-data/archive || true
 bashio::log.info "=== Skin dir ==="
