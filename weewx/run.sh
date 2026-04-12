@@ -44,20 +44,6 @@ fi
 # Force correct port in [Ecowittcustom] (persistent config may have old value)
 sed -i '/^\[Ecowittcustom\]/,/^\[/{s/port = .*/port = 8083/}' "$WEEWX_CONF"
 
-# --- Ensure neowx-material skin report is configured ---
-if ! grep -q 'neowx-material' "$WEEWX_CONF"; then
-    bashio::log.info "Adding neowx-material report section..."
-    # Insert after the HTML_ROOT line inside [StdReport]
-    sed -i '/^\[StdReport\]/,/^\[/{
-        /HTML_ROOT = public_html/a\
-\    [[neowx-material]]\
-\        skin = neowx-material\
-\        enable = true\
-\        lang = fr\
-\        unit_system = metricwx
-    }' "$WEEWX_CONF"
-fi
-
 # --- Apply station settings ---
 sed -i "s/station_type = Simulator/station_type = Ecowittcustom/g" "$WEEWX_CONF"
 sed -i "s/latitude = .*/latitude = $LATITUDE/g" "$WEEWX_CONF"
