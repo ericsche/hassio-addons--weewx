@@ -1,6 +1,6 @@
 {
   "name": "WeeWX",
-  "version": "1.0.25",
+  "version": "1.0.26",
   "slug": "hassio_weewx",
   "description": "Home Assistant app for connecting weather stations using WeeWX",
   "url": "https://github.com/ericsche/hassio-addons--weewx",
@@ -12,17 +12,19 @@
   "startup": "application",
   "boot": "auto",
   "ports": {
-    "80/tcp": 80
+    "80/tcp": 80,
+    "8083/tcp": 8083
   },
   "ports_description": {
-    "80/tcp": "Interceptor port for WeeWX. Needs to be port 80 to use DNS Hack"
+    "80/tcp": "Interceptor port for WeeWX. Needs to be port 80 to use DNS Hack",
+    "8083/tcp": "Ecowittcustom driver port for receiving Ecowitt station data"
   },
   "map": [
     "config:rw"
   ],
   "options": {
     "data_path": "/config/weewx",
-    "driver": "user.interceptor",
+    "driver": "user.ecowittcustom",
     "latitude": 47.5079,
     "longitude": 3.8406,
     "altitude": 134,

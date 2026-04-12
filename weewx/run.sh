@@ -29,6 +29,40 @@ bashio::log.info "Create default config..."
         /opt/weewx-venv/bin/weectl extension install https://github.com/matthewwall/weewx-interceptor/archive/master.zip --config=$WEEWX_DATA/weewx.conf
     fi
 
+    # Install neowx-material skin only if not already installed
+    if ! grep -q "neowx-material" "$WEEWX_DATA/weewx.conf"; then
+        bashio::log.info "Installing neowx-material skin..."
+        /opt/weewx-venv/bin/weectl extension install https://github.com/neoground/neowx-material/archive/master.zip --config=$WEEWX_DATA/weewx.conf
+    fi
+
+    # Copy EN and FR language files for neowx-material skin
+    if [ -d "$WEEWX_DATA/skins/neowx-material" ]; then
+        mkdir -p "$WEEWX_DATA/skins/neowx-material/lang"
+        cp -f /opt/weewx-lang/en.conf "$WEEWX_DATA/skins/neowx-material/lang/en.conf"
+        cp -f /opt/weewx-lang/fr.conf "$WEEWX_DATA/skins/neowx-material/lang/fr.conf"
+        bashio::log.info "Installed EN and FR language files for neowx-material skin"
+    fi
+
+    # Install ecowittcustom driver/extension only if not already installed
+    if ! grep -q "ecowittcustom" "$WEEWX_DATA/weewx.conf"; then
+        bashio::log.info "Installing ecowittcustom extension..."
+        /opt/weewx-venv/bin/weectl extension install https://github.com/WernerKr/Ecowitt-or-DAVIS-stations-and-Season-skin/raw/refs/heads/main/weewx-ecowittcustom.zip --config=$WEEWX_DATA/weewx.conf
+    fi
+
+    # Install SeasonsEcowitt skin only if not already installed
+    if [ ! -d "$WEEWX_DATA/skins/SeasonsEcowitt" ]; then
+        bashio::log.info "Installing SeasonsEcowitt skin..."
+        curl -sL -o /tmp/SeasonsEcowitt.zip https://github.com/WernerKr/Ecowitt-or-DAVIS-stations-and-Season-skin/raw/refs/heads/main/skins/SeasonsEcowitt.zip
+        unzip -qo /tmp/SeasonsEcowitt.zip -d "$WEEWX_DATA/skins/"
+        rm -f /tmp/SeasonsEcowitt.zip
+    fi
+
+    # Add SeasonsEcowitt report to weewx.conf if not already present
+    if ! grep -q "SeasonsEcowitt" "$WEEWX_DATA/weewx.conf"; then
+        bashio::log.info "Adding SeasonsEcowitt report config..."
+        sed -i '/\[\[SeasonsReport\]\]/i\    [[SeasonsEcowitt]]\n        skin = SeasonsEcowitt\n        enable = true\n        lang = en\n        HTML_ROOT = public_html/ecowitt\n' "$WEEWX_DATA/weewx.conf"
+    fi
+
 fi
 /opt/weewx-venv/bin/weectl station reconfigure --driver=$DRIVER --latitude=$LATITUDE --longitude=$LONGITUDE --altitude=$ALTITUDE,$ALTITUDEUNIT --location=$LOCATION --units=$UNITS --no-prompt --config=$WEEWX_DATA/weewx.conf --sqlite-root=$WEEWX_DATA/archive --html-root=$WEEWX_DATA/public_html  --skin-root=$WEEWX_DATA/skins  --no-prompt
 

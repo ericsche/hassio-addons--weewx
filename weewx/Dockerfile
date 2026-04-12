@@ -6,6 +6,7 @@ ENV LANG=C.UTF-8
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         python3-pip python3-venv build-essential libpython3-dev \
+        curl unzip \
     && rm -rf /var/lib/apt/lists/*
 
 RUN python3 -m venv /opt/weewx-venv
@@ -14,10 +15,11 @@ ENV PATH="/opt/weewx-venv/bin:$PATH"
 
 RUN /opt/weewx-venv/bin/pip install --no-cache-dir --upgrade pip \
     && /opt/weewx-venv/bin/pip install --no-cache-dir \
-        wheel configobj libpcap pyserial weewx
+        wheel configobj libpcap pyserial pyephem weewx
 
 # Copy data for add-on
 COPY run.sh /
+COPY lang/ /opt/weewx-lang/
 RUN chmod 755 /run.sh
 
 CMD [ "/run.sh" ]
