@@ -22,12 +22,6 @@ if ! bashio::fs.file_exists "$WEEWX_DATA/weewx.conf"; then
 bashio::log.info "Create default config..."
 /opt/weewx-venv/bin/weectl station create --driver=weewx.drivers.simulator --latitude=$LATITUDE --longitude=$LONGITUDE --altitude=$ALTITUDE,$ALTITUDEUNIT --location=$LOCATION --units=$UNITS --no-prompt --config=$WEEWX_DATA/weewx.conf --sqlite-root=$WEEWX_DATA/archive --html-root=$WEEWX_DATA/public_html  --skin-root=$WEEWX_DATA/skins  --no-prompt
 
-    # Install interceptor extension only if not already installed
-    if ! grep -q "interceptor" "$WEEWX_DATA/weewx.conf"; then
-        bashio::log.info "Installing interceptor extension..."
-        /opt/weewx-venv/bin/weectl extension install https://github.com/matthewwall/weewx-interceptor/archive/master.zip --yes --config=$WEEWX_DATA/weewx.conf
-    fi
-
     # Install neowx-material skin only if not already installed
     if ! grep -q "neowx-material" "$WEEWX_DATA/weewx.conf"; then
         bashio::log.info "Installing neowx-material skin..."
@@ -63,7 +57,12 @@ bashio::log.info "Create default config..."
     fi
 
 fi
-/opt/weewx-venv/bin/weectl station reconfigure --driver=user.ecowittcustom --latitude=$LATITUDE --longitude=$LONGITUDE --altitude=$ALTITUDE,$ALTITUDEUNIT --location=$LOCATION --units=$UNITS --no-prompt --config=$WEEWX_DATA/weewx.conf --sqlite-root=$WEEWX_DATA/archive --html-root=$WEEWX_DATA/public_html  --skin-root=$WEEWX_DATA/skins  --no-prompt
+
+# Apply station settings via sed (avoids driver import issues with reconfigure)
+sed -i "s/station_type = Simulator/station_type = Ecowittcustom/g" $WEEWX_DATA/weewx.conf
+sed -i "s/latitude = .*/latitude = $LATITUDE/g" $WEEWX_DATA/weewx.conf
+sed -i "s/longitude = .*/longitude = $LONGITUDE/g" $WEEWX_DATA/weewx.conf
+sed -i "s/location = .*/location = $LOCATION/g" $WEEWX_DATA/weewx.conf
 
 sed -i 's/archive_interval = 300/archive_interval = 60/g' $WEEWX_DATA/weewx.conf
 
