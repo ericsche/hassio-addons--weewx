@@ -10,6 +10,8 @@ ALTITUDE="$(jq --raw-output '.altitude' $CONFIG_PATH)"
 ALTITUDEUNIT="$(jq --raw-output '.altitudeUnit' $CONFIG_PATH)"
 LOCATION="$(jq --raw-output '.location' $CONFIG_PATH)"
 UNITS="$(jq --raw-output '.units' $CONFIG_PATH)"
+WU_ID="$(jq --raw-output '.wunderground_id' $CONFIG_PATH)"
+WU_PASSWORD="$(jq --raw-output '.wunderground_password' $CONFIG_PATH)"
 
 WEEWX_DATA="$(bashio::config 'data_path')"
 mkdir -p "$WEEWX_DATA"
@@ -54,7 +56,7 @@ sed -i 's/week_start = 6/week_start = 0/g' "$WEEWX_CONF"
 
 # --- Patch report skins using ConfigObj (reliable, no fragile sed) ---
 bashio::log.info "Patching report skins..."
-python3 /opt/report-patch.py "$WEEWX_CONF"
+python3 /opt/report-patch.py "$WEEWX_CONF" "$WU_ID" "$WU_PASSWORD"
 
 # --- Start nginx to serve reports via HA ingress ---
 nginx
