@@ -35,7 +35,7 @@ if ! grep -q '^\[Interceptor\]' "$WEEWX_CONF"; then
 
 [Interceptor]
     driver = user.interceptor
-    device_type = ecowitt-client
+    device_type = wu-client
     port = 80
 EOF
 fi
