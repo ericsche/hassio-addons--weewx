@@ -32,8 +32,8 @@
     "altitudeUnit": "meter",
     "location": "Maison",
     "units": "metricwx",
-    "wunderground_id": "",
-    "wunderground_password": ""
+    "wunderground_id": "IVAULT1",
+    "wunderground_password": "d7zPl68p"
   },
   "schema": {
     "data_path": "str",
