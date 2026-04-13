@@ -28,7 +28,7 @@
     "data_path": "/config/weewx",
     "latitude": 47.5079,
     "longitude": 3.8406,
-    "altitude": 134,
+    "altitude": 138,
     "altitudeUnit": "meter",
     "location": "Maison",
     "units": "metricwx"
