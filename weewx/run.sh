@@ -28,24 +28,23 @@ ln -sf "$WEEWX_DATA/public_html" /root/weewx-data/public_html
 # --- Fix logging: use console instead of syslog ---
 python3 /opt/logging-patch.py "$WEEWX_CONF"
 
-# --- Ensure [Ecowittcustom] section exists ---
-if ! grep -q '^\[Ecowittcustom\]' "$WEEWX_CONF"; then
-    bashio::log.info "Adding [Ecowittcustom] driver section..."
+# --- Ensure [Interceptor] section exists ---
+if ! grep -q '^\[Interceptor\]' "$WEEWX_CONF"; then
+    bashio::log.info "Adding [Interceptor] driver section..."
     cat >> "$WEEWX_CONF" <<'EOF'
 
-[Ecowittcustom]
-    driver = user.ecowittcustom
+[Interceptor]
+    driver = user.interceptor
     device_type = ecowitt-client
-    port = 8083
-    iface = eth0
+    port = 80
 EOF
 fi
 
-# Force correct port in [Ecowittcustom] (persistent config may have old value)
-sed -i '/^\[Ecowittcustom\]/,/^\[/{s/port = .*/port = 8083/}' "$WEEWX_CONF"
+# Force correct port in [Interceptor] (persistent config may have old value)
+sed -i '/^\[Interceptor\]/,/^\[/{s/port = .*/port = 80/}' "$WEEWX_CONF"
 
 # --- Apply station settings ---
-sed -i "s/station_type = Simulator/station_type = Ecowittcustom/g" "$WEEWX_CONF"
+sed -i "s/station_type = Simulator/station_type = Interceptor/g" "$WEEWX_CONF"
 sed -i "s/latitude = .*/latitude = $LATITUDE/g" "$WEEWX_CONF"
 sed -i "s/longitude = .*/longitude = $LONGITUDE/g" "$WEEWX_CONF"
 sed -i "s/location = .*/location = $LOCATION/g" "$WEEWX_CONF"

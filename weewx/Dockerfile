@@ -40,19 +40,12 @@ RUN weectl extension install \
         --yes 2>&1 \
     && test -d /root/weewx-data/skins/neowx-material
 
-# 3. Install ecowittcustom driver via official zip package
-RUN curl -fsSL -o /tmp/weewx-ecowittcustom.zip \
-        "https://github.com/WernerKr/Ecowitt-or-DAVIS-stations-and-Season-skin/raw/refs/heads/main/weewx-ecowittcustom.zip" \
-    && weectl extension install /tmp/weewx-ecowittcustom.zip --yes 2>&1 \
-    && rm -f /tmp/weewx-ecowittcustom.zip \
-    && test -s /root/weewx-data/bin/user/ecowittcustom.py
-
-# 4. Install interceptor extension (HTTP/UDP listener for weather station data)
+# 3. Install interceptor extension (HTTP/UDP listener for weather station data)
 RUN weectl extension install \
         https://github.com/matthewwall/weewx-interceptor/archive/refs/heads/master.zip \
         --yes 2>&1
 
-# 5. Fix logging: use console handler instead of syslog (no /dev/log in container)
+# 4. Fix logging: use console handler instead of syslog (no /dev/log in container)
 COPY logging-patch.py /opt/logging-patch.py
 COPY report-patch.py /opt/report-patch.py
 RUN python3 /opt/logging-patch.py /root/weewx-data/weewx.conf
